@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #333;
+            color: white;
+            padding: 15px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+        nav ul li {
+            padding: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+        }
+        .container {
+            display: flex;
+            margin: 20px;
+        }
+        .sidebar {
+            width: 25%;
+            background: white;
+            padding: 20px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .job-listings {
+            width: 75%;
+            background: white;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            margin-left: 20px;
+        }
+        .job-listings ul {
+            list-style: none;
+            padding: 0;
+        }
+        .job-listings li {
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-left: 3px solid #007BFF;
+            font-size: 14px;
+        }
+        .job-listings li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #333;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">My Company</div>
+        <nav>
+            <ul>
+                <li class="active">Home</li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Job Categories</h2>
+            <ul>
+                <li><a href="#">IT & Software</a></li>
+                <li><a href="#">Marketing</a></li>
+                <li><a href="#">Finance</a></li>
+                <li><a href="#">Healthcare</a></li>
+                <li><a href="#">Education</a></li>
+            </ul>
+        </aside>
+        
+        <main class="job-listings">
+            <h2>Job Listings</h2>
+            <ul>
+                <li><a href="apply.html?job=frontend-developer">
+                    <h3>Frontend Developer</h3>
+                    <p>Company: Tech Solutions</p>
+                    <p>Location: Remote</p>
+                </a></li>
+                <li><a href="apply.html?job=marketing-specialist">
+                    <h3>Marketing Specialist</h3>
+                    <p>Company: MarketPro</p>
+                    <p>Location: New York, NY</p>
+                </a></li>
+                <li><a href="apply.html?job=financial-analyst">
+                    <h3>Financial Analyst</h3>
+                    <p>Company: FinanceCorp</p>
+                    <p>Location: Toronto, ON</p>
+                </a></li>
+            </ul>
+        </main>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 My Company. All rights reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
