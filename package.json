@@ -1,0 +1,32 @@
+{
+  "name": "cosc360-project",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A full-stack job board platform connecting job seekers and employers. Built with HTML, CSS, JavaScript (frontend) and PHP, MySQL (backend), it allows users to register, post jobs, apply, and manage applications. Features include secure authentication, responsive UI, and dynamic job search with filtering for a seamless experience.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProjectsUniversity/COSC360.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ProjectsUniversity/COSC360/issues"
+  },
+  "homepage": "https://github.com/ProjectsUniversity/COSC360#readme",
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.0"
+  }
+}
