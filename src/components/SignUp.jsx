@@ -2,7 +2,7 @@ import { useState } from "react";
 import '../styles/index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function SignUpModal({onClose}) {
+export default function SignUp({onClose}) {
    const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -33,7 +33,7 @@ export default function SignUpModal({onClose}) {
     return (
         <>
             <div className="container mx-auto px-4">
-                <div className="signup-container max-w-md mx-auto my-8 p-6 bg-white rounded shadow-md relative">
+                <div className="signup-container max-w-md mx-auto my-8 p-6 bg-white relative">
                     <h2 className="form-title text-center text-2xl font-bold mb-6">Sign Up</h2>
                     <button 
                         onClick={onClose}
