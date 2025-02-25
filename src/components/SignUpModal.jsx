@@ -1,6 +1,8 @@
 import { useState } from "react";
+import '../styles/index.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function SignUpModal({isOpen}) {
+export default function SignUpModal({onClose}) {
    const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -30,10 +32,13 @@ export default function SignUpModal({isOpen}) {
    }
     return (
         <>
-            <div className="container max-w-[50%] my-20 mx-[25%]">
-                
-                <div className="signup-container">
-                    <h2 className="form-title">Sign Up</h2>
+            <div className="container">
+                <div className="signup-container py-20 px-100">
+                    <h2 className="form-title text-center pb-4">Sign Up</h2>
+                    <button 
+                        onClick={onClose}
+                        className="absolute top-20 right-140 text-gray-500 hover:text-red-600"
+                    >X</button>
                     <form id="signupForm" onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="username" className="form-label">Username</label>
