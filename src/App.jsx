@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import SignUpModal from "/Users/shlokshah/COSC360/src/components/SignUpModal.jsx"
+import SignUpModal from "./components/SignUp.jsx"
 
 export default function App() {
   const[isModalOpen, setIsModalOpen] = useState(false);
