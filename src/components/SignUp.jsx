@@ -1,6 +1,7 @@
 import { useState } from "react";
-import '../styles/index.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import '../styles/index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/SignUp.css';
 
 export default function SignUp({onClose}) {
    const [formData, setFormData] = useState({
@@ -32,39 +33,39 @@ export default function SignUp({onClose}) {
    }
     return (
         <>
-            <div className="container mx-auto px-4">
-                <div className="signup-container max-w-md mx-auto my-8 p-6 bg-white relative">
-                    <h2 className="form-title text-center text-2xl font-bold mb-6">Sign Up</h2>
+            <div className="container">
+                <div className="signup-container">
+                    <h2 className="form-title">Sign Up</h2>
                     <button 
                         onClick={onClose}
-                        className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-xl font-bold"
+                        className="close-button"
                         aria-label="Close"
                     >×</button>
                     <form id="signupForm" onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="username" className="form-label block text-sm font-medium">Username</label>
-                            <input type="text" className="form-control w-full" id="username" name="username" required onChange={handleFormDataChange}/>
+                        <div className="form-group mb-3">
+                            <label htmlFor="username" className="form-label">Username</label>
+                            <input type="text" className="form-input" id="username" name="username" required onChange={handleFormDataChange}/>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label block text-sm font-medium">Email address</label>
-                            <input type="email" className="form-control w-full" id="email" name="email" required onChange={handleFormDataChange}/>
-                            <div className="form-text text-xs mt-1 text-gray-500">We'll never share your email with anyone else.</div>
+                        <div className="form-group mb-3">
+                            <label htmlFor="email" className="form-label">Email address</label>
+                            <input type="email" className="form-input" id="email" name="email" required onChange={handleFormDataChange}/>
+                            <div className="form-text">We'll never share your email with anyone else.</div>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="password" className="form-label block text-sm font-medium">Password</label>
-                            <input type="password" className="form-control w-full" id="password" name="password" required onChange={handleFormDataChange}/>
+                        <div className="form-group mb-3">
+                            <label htmlFor="password" className="form-label">Password</label>
+                            <input type="password" className="form-input" id="password" name="password" required onChange={handleFormDataChange}/>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="confirmPassword" className="form-label block text-sm font-medium">Confirm Password</label>
-                            <input type="password" className="form-control w-full" id="confirmPassword" name="confirmPassword" required onChange={handleFormDataChange}/>
+                        <div className="form-group mb-3">
+                            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                            <input type="password" className="form-input" id="confirmPassword" name="confirmPassword" required onChange={handleFormDataChange}/>
                         </div>
-                        <div className="mb-4 form-check">
-                            <input type="checkbox" className="form-check-input" id="terms" name="terms" required onChange={handleFormDataChange}/>
-                            <label className="form-check-label ms-2 text-sm" htmlFor="terms">I agree to the Terms and Conditions</label>
+                        <div className="form-check mb-4">
+                            <input type="checkbox" className="form-checkbox" id="terms" name="terms" required onChange={handleFormDataChange}/>
+                            <label className="form-label" htmlFor="terms">I agree to the Terms and Conditions</label>
                         </div>
-                        <button type="submit" className="btn btn-primary w-full py-2">Sign Up</button>
-                        <div className="mt-4 text-center text-sm">
-                            <p>Already have an account? <a href="login.html" className="text-blue-600 hover:underline">Login</a></p>
+                        <button type="submit" className="signup-button">Sign Up</button>
+                        <div className="login-text">
+                            <p>Already have an account? <a href="login.html" className="login-link">Login</a></p>
                         </div>
                     </form>
                 </div>
