@@ -11,7 +11,7 @@ export default function App() {
 
   return (
     <div>
-      {!isModalOpen && <button onClick={handleModal}>Open Modal</button>}
+      {!isModalOpen && <button onClick={handleModal}>Open SignUp</button>}
       {isModalOpen && <SignUp onClose={handleModal}/>}
     </div>
   );
