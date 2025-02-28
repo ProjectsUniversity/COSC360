@@ -1,9 +1,8 @@
 import { useState } from "react";
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/SignUp.css';
 
-export default function SignUp({onClose}) {
+export default function SignUp({ onClose, onSwitchToLogin }) {
    const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -22,7 +21,7 @@ export default function SignUp({onClose}) {
         if(input.type === "checkbox"){
             setFormData({
                 ...formData,
-                terms: input.checked
+                [input.name]: input.checked
             });
         }else{
             setFormData({
@@ -31,41 +30,86 @@ export default function SignUp({onClose}) {
             });
         }
    }
-    return (
+
+   return (
         <>
             <div className="container">
                 <div className="signup-container">
-                    <h2 className="form-title">Sign Up</h2>
-                    <button 
-                        onClick={onClose}
-                        className="close-button"
-                        aria-label="Close"
-                    >×</button>
+                <h2 className="form-title">Sign Up</h2>
+                <button 
+                    onClick={onClose || (() => {})}
+                    className="close-button"
+                    aria-label="Close"
+                >X</button>
                     <form id="signupForm" onSubmit={handleSubmit}>
                         <div className="form-group mb-3">
                             <label htmlFor="username" className="form-label">Username</label>
-                            <input type="text" className="form-input" id="username" name="username" required onChange={handleFormDataChange}/>
+                            <input 
+                                type="text" 
+                                className="form-input" 
+                                id="username" 
+                                name="username" 
+                                value={formData.username}
+                                required 
+                                onChange={handleFormDataChange}
+                            />
                         </div>
                         <div className="form-group mb-3">
                             <label htmlFor="email" className="form-label">Email address</label>
-                            <input type="email" className="form-input" id="email" name="email" required onChange={handleFormDataChange}/>
+                            <input 
+                                type="email" 
+                                className="form-input" 
+                                id="email" 
+                                name="email" 
+                                value={formData.email}
+                                required 
+                                onChange={handleFormDataChange}
+                            />
                             <div className="form-text">We'll never share your email with anyone else.</div>
                         </div>
                         <div className="form-group mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
-                            <input type="password" className="form-input" id="password" name="password" required onChange={handleFormDataChange}/>
+                            <input 
+                                type="password" 
+                                className="form-input" 
+                                id="password" 
+                                name="password" 
+                                value={formData.password}
+                                required 
+                                onChange={handleFormDataChange}
+                            />
                         </div>
                         <div className="form-group mb-3">
                             <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                            <input type="password" className="form-input" id="confirmPassword" name="confirmPassword" required onChange={handleFormDataChange}/>
+                            <input 
+                                type="password" 
+                                className="form-input" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                value={formData.confirmPassword}
+                                required 
+                                onChange={handleFormDataChange}
+                            />
                         </div>
                         <div className="form-check mb-4">
-                            <input type="checkbox" className="form-checkbox" id="terms" name="terms" required onChange={handleFormDataChange}/>
+                            <input 
+                                type="checkbox" 
+                                className="form-checkbox" 
+                                id="terms" 
+                                name="terms" 
+                                checked={formData.terms}
+                                required 
+                                onChange={handleFormDataChange}
+                            />
                             <label className="form-label" htmlFor="terms">I agree to the Terms and Conditions</label>
                         </div>
                         <button type="submit" className="signup-button">Sign Up</button>
                         <div className="login-text">
-                            <p>Already have an account? <a href="login.html" className="login-link">Login</a></p>
+                            <p>Already have an account? <button 
+                                onClick={onSwitchToLogin} 
+                                className="btn btn-link p-0 login-link"
+                                style={{ textDecoration: 'none' }}
+                            >Login</button></p>
                         </div>
                     </form>
                 </div>

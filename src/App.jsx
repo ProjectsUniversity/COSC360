@@ -1,19 +1,22 @@
-import React, { useState } from 'react'
-import SignUpModal from "./components/SignUp.jsx"
-import SignUp from './components/SignUp.jsx';
+import { useState } from 'react';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
 
-export default function App() {
-  const[isModalOpen, setIsModalOpen] = useState(false);
-
-  function handleModal(){
-    setIsModalOpen(!isModalOpen);
-  }
-
+function App() {
+  const [currentView, setCurrentView] = useState('signup'); 
+  
+  const switchToLogin = () => setCurrentView('login');
+  const switchToSignUp = () => setCurrentView('signup');
+  
   return (
-    <div>
-      {!isModalOpen && <button onClick={handleModal}>Open SignUp</button>}
-      {isModalOpen && <SignUp onClose={handleModal}/>}
+    <div className="app-container">
+      {currentView === 'login' ? (
+        <Login onSwitchToSignUp={switchToSignUp} />
+      ) : (
+        <SignUp onSwitchToLogin={switchToLogin} />
+      )}
     </div>
   );
 }
 
+export default App;
