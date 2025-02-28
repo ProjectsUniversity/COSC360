@@ -1,5 +1,5 @@
 import { useState } from "react";
-import '../styles/index.css';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/SignUp.css';
 
@@ -23,12 +23,12 @@ export default function SignUp({onClose}) {
             setFormData({
                 ...formData,
                 terms: input.checked
-            })
+            });
         }else{
             setFormData({
                 ...formData,
                 [input.name]: input.value
-            })
+            });
         }
    }
     return (
