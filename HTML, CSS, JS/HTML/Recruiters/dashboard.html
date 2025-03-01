@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .main-content {
+            margin-left: 15%;
+            padding: 20px;
+            width: 85%;
+        }
+        .sidebar {
+            position: fixed;
+            width: 250px;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar a {
+            display: block;
+            width: 100%;
+            padding:  10px 20px;
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .sidebar a:hover {
+            background-color: #ebebeb;
+        }
+        .dashboard-header {
+            padding-top: 10px;
+            
+        }
+        .btn-with-plus::before {
+            content: "+";
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        .sidebar-brand {
+            width: 100%;
+            text-align: center;
+            height: 3.5%;
+        }
+        
+        .widgets-col {
+            background-color: #ebebeb;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .widgets-col h3 {
+            font-size: 2rem;
+        }
+        
+        .widgets-col p {
+            margin-bottom: 0;
+            color: #434343;
+        } 
+
+        #mainJobs > h3{
+            margin: 0.7em 0;
+        }
+
+        .card {
+            margin-top: 1em;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+        }
+        
+        .card:hover {
+            /* box-shadow: 0 5px 25px rgba(0,0,0,0.1); */
+            box-shadow: 0px 0px 22px rgba(184,184,184,1);
+
+
+          }
+        
+        .job-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .badge {
+            margin-right: 0.5rem;
+        }
+        
+        .job-stat {
+            display: inline-block;
+            margin-right: 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .job-stat i {
+            margin-right: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Side bar-->
+    <aside class="sidebar">
+      <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="height: 100vh;">
+        <div class="sidebar-brand mb-3">
+          <a href="/" class="link-body-emphasis text-decoration-none">
+            <span class="fs-4"><h3>Job Swipe</h3></span>
+          </a>
+        </div>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a href="#" class="nav-link active" aria-current="page">
+              <i class="fa-solid fa-chart-simple"></i>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link link-body-emphasis">
+              Messages
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link link-body-emphasis">
+              Company Profile
+            </a>
+          </li>
+        </ul>
+        <hr>
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle justify-content-center" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://avatars.githubusercontent.com/u/106793433?v=4" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong>Shlok Shah</strong>
+          </a>
+          <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i> &nbsp; Settings</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user"></i> &nbsp; Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-door-open"></i> &nbsp;Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Main Header-->
+      <header>
+        <div class="dashboard-header d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="mb-0">Recruiter Dashboard</h1>
+            <p class="text-muted">Welcome back, Shlok!</p>
+          </div>
+          <button class="btn btn-success btn-with-plus">
+            Post New Job
+          </button>
+        </div>
+      </header>
+      
+      <!-- Widgets -->
+      <div class="row py-4">
+        <div class="col-md-4">
+          <div class="widgets-col">
+            <h3>5</h3>
+            <p>Active Jobs</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="widgets-col">
+            <h3>35</h3>
+            <p>Total Applicants</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="widgets-col">
+            <h3>2</h3>
+            <p>Interviews Scheduled</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Job Posts -->
+
+      <!-- Main navbar-->
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">My Jobs</a>
+        </li>
+        <li class="nav-item">
+          <!-- Need to discuss this tho, might not keep it-->
+          <a class="nav-link" href="#">All Applicants</a>
+        </li>
+      </ul>
+
+
+      <section id="mainJobs">
+        <h3>My Posted Jobs</h3>
+        
+        <!-- Job 1: Software Engineer -->
+        <div class="card" style="width: 100%;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">Software Engineer</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Tech Corp</h6>
+              </div>
+              <span class="badge bg-success">Active</span>
+            </div>
+            <p class="card-text">Looking for a skilled developer with experience in JavaScript and Python. This is a full-time position with competitive salary and benefits.</p>
+            <div>
+              <span class="badge bg-primary">Full-time</span>
+              <span class="badge bg-secondary">Remote</span>
+              <span class="badge bg-info">Tech</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="job-stat"><i class="fas fa-eye"></i> 145 Views</span>
+                <span class="job-stat"><i class="fas fa-user"></i> 12 Applicants</span>
+                <span class="job-stat"><i class="fas fa-calendar"></i> Posted 5 days ago</span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <a href="#" class="btn btn-sm btn-outline-danger">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 2: Product Manager -->
+        <div class="card" style="width: 100%;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">Product Manager</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Biz Solutions</h6>
+              </div>
+              <span class="badge bg-success">Active</span>
+            </div>
+            <p class="card-text">Seeking a highly motivated individual with leadership skills. The ideal candidate will have experience in agile methodologies and a track record of successful product launches.</p>
+            <div>
+              <span class="badge bg-primary">Full-time</span>
+              <span class="badge bg-secondary">Hybrid</span>
+              <span class="badge bg-info">Management</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="job-stat"><i class="fas fa-eye"></i> 98 Views</span>
+                <span class="job-stat"><i class="fas fa-user"></i> 8 Applicants</span>
+                <span class="job-stat"><i class="fas fa-calendar"></i> Posted 1 week ago</span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <a href="#" class="btn btn-sm btn-outline-danger">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 3: Data Analyst -->
+        <div class="card" style="width: 100%;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">Data Analyst</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Data Insights</h6>
+              </div>
+              <span class="badge rounded-pill text-bg-warning">On Hold</span>
+            </div>
+            <p class="card-text">Strong analytical skills required. Experience in SQL preferred. Must be proficient in data visualization tools and comfortable presenting insights to stakeholders.</p>
+            <div>
+              <span class="badge bg-primary">Full-time</span>
+              <span class="badge bg-secondary">In-office</span>
+              <span class="badge bg-info">Analytics</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="job-stat"><i class="fas fa-eye"></i> 112 Views</span>
+                <span class="job-stat"><i class="fas fa-user"></i> 9 Applicants</span>
+                <span class="job-stat"><i class="fas fa-calendar"></i> Posted 3 days ago</span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <a href="#" class="btn btn-sm btn-outline-danger">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Job 4: UX/UI Designer -->
+        <div class="card" style="width: 100%;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">UX/UI Designer</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Tech Corp</h6>
+              </div>
+              <span class="badge bg-success">Active</span>
+            </div>
+            <p class="card-text">Looking for a creative designer with experience in user research, wireframing, and prototyping. Portfolio showcasing previous work is required.</p>
+            <div>
+              <span class="badge bg-primary">Part-Time</span>
+              <span class="badge bg-secondary">Remote</span>
+              <span class="badge bg-info">Design</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="job-stat"><i class="fas fa-eye"></i> 87 Views</span>
+                <span class="job-stat"><i class="fas fa-user"></i> 5 Applicants</span>
+                <span class="job-stat"><i class="fas fa-calendar"></i> Posted 2 days ago</span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <a href="#" class="btn btn-sm btn-outline-danger">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Job 5: Marketing Specialist -->
+        <div class="card" style="width: 100%;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">Marketing Specialist</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Biz Solutions</h6>
+              </div>
+              <span class="badge bg-danger">Inactive</span>
+            </div>
+            <p class="card-text">Join our marketing team to develop and implement digital marketing strategies. Experience with social media management and content creation is essential.</p>
+            <div>
+              <span class="badge bg-primary">Full-time</span>
+              <span class="badge bg-secondary">Hybrid</span>
+              <span class="badge bg-info">Marketing</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="job-stat"><i class="fas fa-eye"></i> 64 Views</span>
+                <span class="job-stat"><i class="fas fa-user"></i> 1 Applicant</span>
+                <span class="job-stat"><i class="fas fa-calendar"></i> Posted today</span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <a href="#" class="btn btn-sm btn-outline-danger">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
