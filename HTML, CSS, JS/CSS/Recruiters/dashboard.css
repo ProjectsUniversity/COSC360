@@ -68,6 +68,7 @@
 .card {
     margin-top: 1em;
     box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
 .card:hover {
@@ -93,4 +94,8 @@
 
 .job-stat i {
     margin-right: 0.25rem;
+}
+
+.sidebar .d-flex {
+    height: 100vh;
 } 
