@@ -1,6 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Swipe Feature</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="/HTML, CSS, JS/CSS/homepage.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>JobSwipe</h2>
+    <a href="userprofile.html">Your Account</a>
+    <a href="#">Settings</a>
+    <a href="#">Help</a>
+  </div>
+
+  <div class="main-content">
+    <div class="job-card" id="job-card">
+      <img src="company-logo.png" alt="Company Logo" />
+      <h2 id="job-title">Software Engineer</h2>
+      <h4 id="company-name">Tech Corp</h4>
+      <p id="job-description">Looking for a skilled developer with experience in JavaScript and Python.</p>
+      <div class="social-icons">
+        <i class="fas fa-heart" onclick="likeJob()"></i>
+        <i class="fas fa-bookmark" onclick="saveJob()"></i>
+        <i class="fas fa-share"></i>
+      </div>
+    </div>
+    <div class="controls">
+      <!-- Left arrow now rejects -->
+      <button onclick="nextJob('reject')"><i class="fas fa-arrow-left"></i></button>
+      <div class="actions">
+        <button class="reject" onclick="nextJob('reject')">Reject</button>
+        <button class="apply" onclick="nextJob('apply')">Apply</button>
+      </div>
+      <!-- Right arrow now applies -->
+      <button onclick="nextJob('apply')"><i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    const jobs = [
+      { title: "Software Engineer", company: "Tech Corp", description: "Looking for a skilled developer with experience in JavaScript and Python." },
+      { title: "Product Manager", company: "Biz Solutions", description: "Seeking a highly motivated individual with leadership skills." },
+      { title: "Data Analyst", company: "Data Insights", description: "Strong analytical skills required. Experience in SQL preferred." }
+    ];
+
+    let currentJobIndex = 0;
+
+    function updateJob() {
+      document.getElementById("job-title").innerText = jobs[currentJobIndex].title;
+      document.getElementById("company-name").innerText = jobs[currentJobIndex].company;
+      document.getElementById("job-description").innerText = jobs[currentJobIndex].description;
+    }
+
+    function nextJob(action) {
+      const jobCard = document.getElementById("job-card");
+      jobCard.style.opacity = "0";
+      // If action is 'apply', move card right; if 'reject', move card left.
+      jobCard.style.transform = action === 'apply' ? "translateX(100%)" : "translateX(-100%)";
+
+      setTimeout(() => {
+        if (action === "apply") {
+          window.location.href = "apply.html?job=" + jobs[currentJobIndex].title;
+        }
+        if (currentJobIndex < jobs.length - 1) {
+          currentJobIndex++;
+          updateJob();
+          jobCard.style.opacity = "1";
+          jobCard.style.transform = "translateX(0)";
+        } else {
+          alert("No more jobs available.");
+        }
+      }, 400);
+    }
+
+    function likeJob() {
+      alert("You liked this job!");
+    }
+
+    function saveJob() {
+      alert("Job saved!");
+    }
+  </script>
+</body>
+</html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Swipe Feature</title>
