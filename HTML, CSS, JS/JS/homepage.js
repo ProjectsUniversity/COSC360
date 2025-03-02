@@ -14,9 +14,14 @@ const jobs = [
   
   function nextJob(action) {
     const jobCard = document.getElementById("job-card");
-    jobCard.style.opacity = "0";
+    jobCard.classList.add('card-hidden');
+    
     // If action is 'apply', move card right; if 'reject', move card left.
-    jobCard.style.transform = action === 'apply' ? "translateX(100%)" : "translateX(-100%)";
+    if (action === 'apply') {
+      jobCard.classList.add('card-move-right');
+    } else {
+      jobCard.classList.add('card-move-left');
+    }
   
     setTimeout(() => {
       if (action === "apply") {
@@ -25,8 +30,8 @@ const jobs = [
       if (currentJobIndex < jobs.length - 1) {
         currentJobIndex++;
         updateJob();
-        jobCard.style.opacity = "1";
-        jobCard.style.transform = "translateX(0)";
+        jobCard.classList.remove('card-hidden', 'card-move-right', 'card-move-left');
+        jobCard.classList.add('card-visible');
       } else {
         alert("No more jobs available.");
       }
