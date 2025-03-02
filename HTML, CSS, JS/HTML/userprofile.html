@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - JobSwipe</title>
+
     <link rel="stylesheet" href="../CSS/userprofile.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/HTML, CSS, JS/CSS/user-profile.css">
+    <script src="/HTML, CSS, JS/JS/userprofile.js" defer></script>
+
 </head>
 <body>
     <div class="sidebar">
@@ -82,112 +88,5 @@
             <button class="edit-button" onclick="saveChanges()">Save Changes</button>
         </div>
     </div>
-
-    <script>
-        function openEditModal(section) {
-            const modal = document.getElementById('editModal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalContent = document.getElementById('modal-content');
-            
-            modal.style.display = 'block';
-            modalTitle.innerText = 'Edit ' + section.charAt(0).toUpperCase() + section.slice(1);
-            
-            switch(section) {
-                case 'profile':
-                    modalContent.innerHTML = `
-                        <input type="text" placeholder="Name" value="John Doe">
-                        <input type="text" placeholder="Title" value="Software Developer">
-                        <input type="file" accept="image/*">
-                    `;
-                    break;
-                case 'skills':
-                    modalContent.innerHTML = `
-                        <input type="text" placeholder="Add new skill">
-                        <div id="current-skills">
-                            ${document.getElementById('skills-list').innerHTML}
-                        </div>
-                    `;
-                    break;
-                case 'qualifications':
-                    modalContent.innerHTML = `
-                        <input type="text" placeholder="Degree/Certification">
-                        <input type="text" placeholder="Institution">
-                        <input type="text" placeholder="Year">
-                    `;
-                    break;
-                case 'resume':
-                    modalContent.innerHTML = `
-                        <div class="file-upload">
-                            <input type="file" id="resume-file" accept=".pdf,.doc,.docx" style="margin-bottom: 15px;">
-                            <p style="color: #666; font-size: 14px;">Accepted formats: PDF, DOC, DOCX</p>
-                        </div>
-                    `;
-                    handleResumeUpload();
-                    break;
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        function saveChanges() {
-            const modalTitle = document.getElementById('modal-title').innerText;
-            
-            if (modalTitle.includes('Resume')) {
-                const fileInput = document.getElementById('resume-file');
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const resumePreview = document.getElementById('resume-preview');
-                    const resumeStatus = document.getElementById('resume-status');
-                    
-                    resumeStatus.style.display = 'none';
-                    resumePreview.innerHTML = `
-                        <div class="resume-file">
-                            <div>
-                                <i class="fas fa-file-pdf"></i>
-                                ${file.name}
-                            </div>
-                            <button class="edit-button" onclick="openEditModal('resume')">
-                                Replace
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-            closeModal();
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('editModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        function handleResumeUpload() {
-            const fileInput = document.getElementById('resume-file');
-            const resumePreview = document.getElementById('resume-preview');
-            const resumeStatus = document.getElementById('resume-status');
-
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    resumeStatus.style.display = 'none';
-                    resumePreview.innerHTML = `
-                        <div class="resume-file">
-                            <div>
-                                <i class="fas fa-file-pdf"></i>
-                                ${file.name}
-                            </div>
-                            <button class="edit-button" onclick="document.getElementById('resume-file').click()">
-                                Replace
-                            </button>
-                        </div>
-                    `;
-                }
-            });
-        }
-    </script>
 </body>
 </html>
