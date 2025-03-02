@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - JobSwipe</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #333;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 0;
+        }
+
+        .sidebar a:hover {
+            background: #444;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .container, .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007BFF;
+        }
+
+        .profile-info h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .edit-button:hover {
+            background: #0056b3;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .application-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .application-item:hover {
+            transform: translateX(5px);
+            border-left: 3px solid #007BFF;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 50%;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .resume-section {
+            padding: 15px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .resume-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .resume-file i {
+            margin-right: 10px;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>JobSwipe</h2>
+        <a href="homepage.html"><i class="fas fa-home"></i> Home</a>
+        <a href="userprofile.html" class="active"><i class="fas fa-user"></i> Profile</a>
+        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="profile-header">
+                <img src="default-profile.jpg" alt="Profile Picture" class="profile-picture" id="profile-picture">
+                <div class="profile-info">
+                    <h1>John Doe</h1>
+                    <p>Software Developer</p>
+                    <button class="edit-button" onclick="openEditModal('profile')">Edit Profile</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Skills <button class="edit-button" onclick="openEditModal('skills')">Edit</button></h2>
+                <div class="skills-list" id="skills-list">
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Node.js</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Qualifications <button class="edit-button" onclick="openEditModal('qualifications')">Edit</button></h2>
+                <div class="qualifications-list" id="qualifications-list">
+                    <div class="qualification-item">
+                        <h3>Bachelor of Computer Science</h3>
+                        <p>University of Example, 2020-2024</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Resume <button class="edit-button" onclick="openEditModal('resume')">Edit</button></h2>
+                <div class="resume-section" id="resume-section">
+                    <div id="current-resume">
+                        <p id="resume-status">No resume uploaded</p>
+                        <div id="resume-preview"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Job Applications</h2>
+                <ul class="applications-list" id="applications-list">
+                    <li class="application-item">
+                        <h3>Software Engineer at Tech Corp</h3>
+                        <p>Applied: January 15, 2024</p>
+                        <p>Status: Under Review</p>
+                    </li>
+                    <li class="application-item">
+                        <h3>Frontend Developer at Web Solutions</h3>
+                        <p>Applied: January 10, 2024</p>
+                        <p>Status: Interviewed</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Edit Profile</h2>
+            <div id="modal-content"></div>
+            <button class="edit-button" onclick="saveChanges()">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(section) {
+            const modal = document.getElementById('editModal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            
+            modal.style.display = 'block';
+            modalTitle.innerText = 'Edit ' + section.charAt(0).toUpperCase() + section.slice(1);
+            
+            switch(section) {
+                case 'profile':
+                    modalContent.innerHTML = `
+                        <input type="text" placeholder="Name" value="John Doe">
+                        <input type="text" placeholder="Title" value="Software Developer">
+                        <input type="file" accept="image/*">
+                    `;
+                    break;
+                case 'skills':
+                    modalContent.innerHTML = `
+                        <input type="text" placeholder="Add new skill">
+                        <div id="current-skills">
+                            ${document.getElementById('skills-list').innerHTML}
+                        </div>
+                    `;
+                    break;
+                case 'qualifications':
+                    modalContent.innerHTML = `
+                        <input type="text" placeholder="Degree/Certification">
+                        <input type="text" placeholder="Institution">
+                        <input type="text" placeholder="Year">
+                    `;
+                    break;
+                case 'resume':
+                    modalContent.innerHTML = `
+                        <div class="file-upload">
+                            <input type="file" id="resume-file" accept=".pdf,.doc,.docx" style="margin-bottom: 15px;">
+                            <p style="color: #666; font-size: 14px;">Accepted formats: PDF, DOC, DOCX</p>
+                        </div>
+                    `;
+                    handleResumeUpload();
+                    break;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveChanges() {
+            const modalTitle = document.getElementById('modal-title').innerText;
+            
+            if (modalTitle.includes('Resume')) {
+                const fileInput = document.getElementById('resume-file');
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const resumePreview = document.getElementById('resume-preview');
+                    const resumeStatus = document.getElementById('resume-status');
+                    
+                    resumeStatus.style.display = 'none';
+                    resumePreview.innerHTML = `
+                        <div class="resume-file">
+                            <div>
+                                <i class="fas fa-file-pdf"></i>
+                                ${file.name}
+                            </div>
+                            <button class="edit-button" onclick="openEditModal('resume')">
+                                Replace
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+            closeModal();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        function handleResumeUpload() {
+            const fileInput = document.getElementById('resume-file');
+            const resumePreview = document.getElementById('resume-preview');
+            const resumeStatus = document.getElementById('resume-status');
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    resumeStatus.style.display = 'none';
+                    resumePreview.innerHTML = `
+                        <div class="resume-file">
+                            <div>
+                                <i class="fas fa-file-pdf"></i>
+                                ${file.name}
+                            </div>
+                            <button class="edit-button" onclick="document.getElementById('resume-file').click()">
+                                Replace
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
