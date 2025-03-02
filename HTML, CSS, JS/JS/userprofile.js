@@ -77,7 +77,6 @@ function generateModalContent(section) {
                     ${document.getElementById('skills-list').innerHTML}
                 </div>
             `;
-        // ...other cases
     }
 }
 
@@ -121,7 +120,6 @@ function validateForm(section) {
                 isValid = false;
             }
             break;
-        // ...other validation cases
     }
 
     return { isValid, errors };
@@ -143,10 +141,7 @@ function saveChanges() {
 }
 
 function displayErrors(errors) {
-    // Clear previous errors
     document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-    
-    // Display new errors
     Object.entries(errors).forEach(([field, message]) => {
         const errorEl = document.getElementById(`${field}-error`);
         if (errorEl) {
@@ -172,20 +167,15 @@ function updateContent(section) {
                 reader.readAsDataURL(imageFile);
             }
             break;
-        // ...other update cases
     }
 }
 
-// Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Modal close on outside click
     window.onclick = function(event) {
         const modal = document.getElementById('editModal');
         if (event.target === modal) {
             closeModal();
         }
     };
-
-    // Close button handler
     document.querySelector('.close').addEventListener('click', closeModal);
 });
