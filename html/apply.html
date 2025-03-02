@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/apply.css">
     title>Apply for Job</title>
-    
+    <script src="../JS/apply.js"></script>
 </head>
 <body>
     <div class="container">
@@ -27,12 +27,5 @@
         </form>
     </div>
     
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const jobTitle = params.get('job');
-        if (jobTitle) {
-            document.getElementById('job-title').innerText = jobTitle.replace('-', ' ');
-        }
-    </script>
 </body>
 </html>
