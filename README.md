@@ -51,20 +51,6 @@ The project is organized into the following main directories:
 3. **Recruiter Dashboard** (`HTML, CSS, JS/HTML/Recruiters/dashboard.html`): Main dashboard for recruiters to manage job postings and applications
 4. **Company Dashboard** (`HTML, CSS, JS/HTML/company-dashboard.html`): Company-specific dashboard for organizational management
 
-## Testing Instructions
-
-To test the application:
-
-1. **Start with the landing page for unregistered users** (`HTML, CSS, JS/HTML/index.html`)
-   - Browse job listings and try to interact with UI elements
-   - Verify you're prompted to sign up
-
-2. **Test user registration flow** by clicking "Sign Up" and creating a new account
-3. **Test recruiter flow** by clicking "Login as a recruiter" and using the recruiter portal
-4. **Explore the job seeker experience** by logging in and browsing jobs from the homepage
-5. **Test the application process** by selecting jobs and submitting applications
-6. **Test the recruiter dashboard** to manage job postings and view applications
-
 ## Technologies Used
 
 - **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
