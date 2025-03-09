@@ -12,9 +12,9 @@ export default function App() {
 
   return (
     <div>
-      {showRecruiterLogin && <RecruiterLogin />}
+      {showRecruiterLogin && <RecruiterLogin onToggleForm={toggleRecruiterLogin} />}
 
-      {!showRecruiterLogin && <RecSignUp />}
+      {!showRecruiterLogin && <RecSignUp onToggleForm={toggleRecruiterLogin} />}
     </div>
   );
 }

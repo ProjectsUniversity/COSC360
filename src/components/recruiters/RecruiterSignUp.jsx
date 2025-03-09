@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recSignUp.css';
 
-const RecSignUp = () => {
+const RecSignUp = ({ onToggleForm }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -75,9 +75,11 @@ const RecSignUp = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Create Recruiter Account</button>
                     <div className="mt-3 text-center">
-                        <p>Already have an account? <a href="/components/recruiters/RecruiterLogin.jsx">Login as Recruiter</a></p>
+                        <p>Already have an account? <a href="#" onClick={(e) => {
+                            e.preventDefault();
+                            onToggleForm();
+                        }}>Login as Recruiter</a></p>
                         <p>Looking for a job? <a href="../signup.html">Sign up as a job seeker</a></p>
-                        <p><a href="../index.html">Continue as guest</a></p>
                     </div>
                 </form>
             </div>
