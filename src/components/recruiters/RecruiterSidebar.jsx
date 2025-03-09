@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faChartSimple, faMessage, faBuilding, 
@@ -6,6 +6,30 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const RecruiterSidebar = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.getElementById('profile-dropdown');
+      const toggleButton = document.getElementById('profile-dropdown-toggle');
+      
+      if (dropdown && !dropdown.contains(event.target) && 
+          toggleButton && !toggleButton.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
   return (
     <aside className="sidebar">
       <div className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary">
@@ -37,11 +61,29 @@ const RecruiterSidebar = () => {
         </ul>
         <hr />
         <div className="dropdown">
-          <a href="#" className="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle justify-content-center" data-bs-toggle="dropdown" aria-expanded="false" style={{ maxHeight: '32px' }}>
+          <a 
+            href="#" 
+            id="profile-dropdown-toggle"
+            className="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle justify-content-center" 
+            style={{ maxHeight: '32px' }}
+            onClick={toggleDropdown}
+            aria-expanded={dropdownOpen}
+          >
             <img src="https://avatars.githubusercontent.com/u/106793433?v=4" alt="" width="32px" height="32px" className="rounded-circle me-2" />
             <strong>Shlok Shah</strong>
           </a>
-          <ul className="dropdown-menu text-small shadow">
+          <ul 
+            id="profile-dropdown"
+            className={`dropdown-menu text-small shadow ${dropdownOpen ? 'show' : ''}`}
+            style={{ 
+              display: dropdownOpen ? 'block' : 'none', 
+              position: 'absolute',
+              bottom: '100%',  // Position above the toggle button
+              left: 0,         // Align with the left of the parent
+              marginBottom: '5px', // Add some space between menu and button
+              transform: 'none' // Remove any default transform
+            }}
+          >
             <li>
               <a className="dropdown-item" href="#">
                 <FontAwesomeIcon icon={faGear} className="me-2" />
