@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import SignUpModal from "./components/SignUp.jsx"
 import SignUp from './components/SignUp.jsx';
-import RecSignUp from './components/recruiters/recSignUp.jsx';
+import RecSignUp from './components/recruiters/RecruiterSignUp.jsx';
 import RecruiterLogin from './components/recruiters/RecruiterLogin.jsx';
 
 export default function App() {
