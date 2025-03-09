@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faChartSimple, faGear, faUser, faDoorOpen,
-  faEye, faUsers, faCalendar
-} from '@fortawesome/free-solid-svg-icons';
 import '../../../HTML, CSS, JS/CSS/Recruiters/dashboard.css';
 import RecruiterSidebar from './RecruiterSidebar';
 import JobCard from './JobCard';

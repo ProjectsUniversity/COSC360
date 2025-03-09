@@ -15,17 +15,38 @@
     align-items: center;
 }
 
-.sidebar a {
-    display: block;
-    width: 100%;
-    padding: 10px 20px;
-    color: #333;
-    text-decoration: none;
-    text-align: center;
+/* Reset all hover effects first */
+.sidebar a:hover {
+    background-color: transparent;
 }
 
-.sidebar a:hover {
+/* Only apply hover effect to main navigation items in nav-pills */
+.sidebar .nav-pills a:hover {
     background-color: #ebebeb;
+}
+
+/* Remove dropdown hover effects */
+.sidebar .dropdown-toggle:hover,
+.sidebar .dropdown:hover,
+.sidebar-brand a:hover {
+    background-color: transparent;
+}
+
+.sidebar .dropdown {
+    width: 100%;
+}
+
+/* Make sure the dropdown components have proper width */
+.sidebar .dropdown a {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Remove shadow from the Job Swipe text */
+.sidebar-brand h3 {
+    text-shadow: none;
 }
 
 .dashboard-header {
@@ -98,4 +119,4 @@
 
 .sidebar .d-flex {
     height: 100vh;
-} 
+}

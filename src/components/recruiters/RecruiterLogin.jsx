@@ -106,7 +106,7 @@ const RecruiterLogin = ({ onToggleForm, onLogin }) => {
                         }}>Sign Up as Recruiter</a></p>
                         <a href="../login.html">Login as a job seeker</a>
                         <p><a href="#" className="text-muted">Forgot Password?</a></p>
-                        <p><a href="../index.html">Continue as guest</a></p>
+                        
                     </div>
                 </form>
             </div>
