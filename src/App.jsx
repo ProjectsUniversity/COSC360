@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import SignUpModal from "./components/SignUp.jsx"
 import SignUp from './components/SignUp.jsx';
+import RecSignUp from './components/recruiters/recSignUp.jsx';
 
 export default function App() {
   const[isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +14,8 @@ export default function App() {
     <div>
       {!isModalOpen && <button onClick={handleModal}>Open SignUp</button>}
       {isModalOpen && <SignUp onClose={handleModal}/>}
+
+      <RecSignUp />
     </div>
   );
 }
