@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recSignUp.css';
 
-const RecSignUp = ({ onToggleForm, onSignup }) => {
+const RecSignUp = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -24,12 +26,10 @@ const RecSignUp = ({ onToggleForm, onSignup }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add form validation and submission logic here
+        // Add form validation logic here
         
         // For now, just navigate to the dashboard
-        if (onSignup) {
-            onSignup();
-        }
+        navigate('/recruiter/dashboard');
     };
 
     return (
@@ -80,11 +80,8 @@ const RecSignUp = ({ onToggleForm, onSignup }) => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Create Recruiter Account</button>
                     <div className="mt-3 text-center">
-                        <p>Already have an account? <a href="#" onClick={(e) => {
-                            e.preventDefault();
-                            onToggleForm();
-                        }}>Login as Recruiter</a></p>
-                        <p>Looking for a job? <a href="../signup.html">Sign up as a job seeker</a></p>
+                        <p>Already have an account? <Link to="/recruiter/login">Login as Recruiter</Link></p>
+                        <p>Looking for a job? <Link to="/signup">Sign up as a job seeker</Link></p>
                     </div>
                 </form>
             </div>

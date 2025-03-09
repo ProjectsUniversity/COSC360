@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recLogin.css';
 
-const RecruiterLogin = ({ onToggleForm, onLogin }) => {
+const RecruiterLogin = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -47,14 +49,8 @@ const RecruiterLogin = ({ onToggleForm, onLogin }) => {
         
         if (validateForm()) {
             console.log('Form submitted successfully:', formData);
-            // Here you would typically make an API call to authenticate the user
-            
-            // Instead of alert, navigate to dashboard
-            if (onLogin) {
-                onLogin();
-            } else {
-                alert('Login successful!');
-            }
+            // Navigate to dashboard using React Router
+            navigate('/recruiter/dashboard');
         }
     };
 
@@ -100,13 +96,9 @@ const RecruiterLogin = ({ onToggleForm, onLogin }) => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                     <div className="mt-3 text-center">
-                        <p>Don't have a recruiter account? <a href="#" onClick={(e) => {
-                            e.preventDefault();
-                            onToggleForm();
-                        }}>Sign Up as Recruiter</a></p>
-                        <a href="../login.html">Login as a job seeker</a>
+                        <p>Don't have a recruiter account? <Link to="/recruiter/signup">Sign Up as Recruiter</Link></p>
+                        <Link to="/login">Login as a job seeker</Link>
                         <p><a href="#" className="text-muted">Forgot Password?</a></p>
-                        
                     </div>
                 </form>
             </div>

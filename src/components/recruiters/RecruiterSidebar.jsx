@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faChartSimple, faMessage, faBuilding, 
@@ -34,29 +35,35 @@ const RecruiterSidebar = () => {
     <aside className="sidebar">
       <div className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary">
         <div className="sidebar-brand mb-3">
-          <a href="/" className="link-body-emphasis text-decoration-none">
+          <Link to="/" className="link-body-emphasis text-decoration-none">
             <span className="fs-4"><h3>Job Swipe</h3></span>
-          </a>
+          </Link>
         </div>
         <hr />
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
-            <a href="#" className="nav-link active" aria-current="page">
+            <NavLink to="/recruiter/dashboard" className={({ isActive }) => 
+              isActive ? "nav-link active" : "nav-link link-body-emphasis"
+            }>
               <FontAwesomeIcon icon={faChartSimple} className="me-2" />
               Dashboard
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#" className="nav-link link-body-emphasis">
+            <NavLink to="/recruiter/messages" className={({ isActive }) => 
+              isActive ? "nav-link active" : "nav-link link-body-emphasis"
+            }>
               <FontAwesomeIcon icon={faMessage} className="me-2" />
               Messages
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#" className="nav-link link-body-emphasis">
+            <NavLink to="/recruiter/company-profile" className={({ isActive }) => 
+              isActive ? "nav-link active" : "nav-link link-body-emphasis"
+            }>
               <FontAwesomeIcon icon={faBuilding} className="me-2" />
               Company Profile
-            </a>
+            </NavLink>
           </li>
         </ul>
         <hr />
@@ -85,23 +92,23 @@ const RecruiterSidebar = () => {
             }}
           >
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/recruiter/settings">
                 <FontAwesomeIcon icon={faGear} className="me-2" />
                 Settings
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/recruiter/profile">
                 <FontAwesomeIcon icon={faUser} className="me-2" />
                 Profile
-              </a>
+              </Link>
             </li>
             <li><hr className="dropdown-divider" /></li>
             <li>
-              <a className="dropdown-item" href="../login.html">
+              <Link className="dropdown-item" to="/recruiter/login">
                 <FontAwesomeIcon icon={faDoorOpen} className="me-2" />
                 Sign out
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
