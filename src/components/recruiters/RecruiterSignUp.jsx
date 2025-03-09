@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recSignUp.css';
 
-const RecSignUp = ({ onToggleForm }) => {
+const RecSignUp = ({ onToggleForm, onSignup }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -25,6 +25,11 @@ const RecSignUp = ({ onToggleForm }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add form validation and submission logic here
+        
+        // For now, just navigate to the dashboard
+        if (onSignup) {
+            onSignup();
+        }
     };
 
     return (

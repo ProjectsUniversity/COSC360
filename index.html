@@ -4,10 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recruiter Sign Up</title>
+    <title>JobSwipe</title>
+    <style>
+        .dev-links {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 9999;
+        }
+        .dev-links a {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Development shortcuts (remove in production) -->
+    <div class="dev-links">
+        <h4>Development Links</h4>
+        <a href="#" onclick="window.dispatchEvent(new CustomEvent('viewDashboard')); return false;">View Dashboard</a>
+        <a href="#" onclick="window.dispatchEvent(new CustomEvent('viewLogin')); return false;">View Login</a>
+        <a href="#" onclick="window.dispatchEvent(new CustomEvent('viewSignup')); return false;">View Signup</a>
+    </div>
+
+    <script>
+        // Listen for custom events in App.jsx
+    </script>
 </body>
 </html>

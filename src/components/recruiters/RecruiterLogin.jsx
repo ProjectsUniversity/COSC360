@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recLogin.css';
 
-const RecruiterLogin = ({ onToggleForm }) => {
+const RecruiterLogin = ({ onToggleForm, onLogin }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -48,12 +48,13 @@ const RecruiterLogin = ({ onToggleForm }) => {
         if (validateForm()) {
             console.log('Form submitted successfully:', formData);
             // Here you would typically make an API call to authenticate the user
-            // and handle the response accordingly
-            alert('Login successful!');
             
-            // Redirect to dashboard or other page
-            // You can use React Router for navigation
-            // history.push('/dashboard');
+            // Instead of alert, navigate to dashboard
+            if (onLogin) {
+                onLogin();
+            } else {
+                alert('Login successful!');
+            }
         }
     };
 
