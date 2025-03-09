@@ -37,7 +37,7 @@ const RecruiterSidebar = () => {
         </ul>
         <hr />
         <div className="dropdown">
-          <a href="#" className="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle justify-content-center" data-bs-toggle="dropdown" aria-expanded="false">
+          <a href="#" className="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle justify-content-center" data-bs-toggle="dropdown" aria-expanded="false" style={{ maxHeight: '32px' }}>
             <img src="https://avatars.githubusercontent.com/u/106793433?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
             <strong>Shlok Shah</strong>
           </a>
