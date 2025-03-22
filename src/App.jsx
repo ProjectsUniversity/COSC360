@@ -5,7 +5,6 @@ import SignUp from './components/SignUp';
 import Login from './components/Login';
 
 export default function App() {
-  // Add a currentView state to manage which component to show
   const [currentView, setCurrentView] = useState('home');  // possible values: 'home', 'login', 'signup'
   const [jobs, setJobs] = useState([
     { title: "Software Engineer", company: "Tech Corp", description: "Looking for a skilled developer with experience in JavaScript and Python." },
@@ -15,7 +14,7 @@ export default function App() {
 
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
 
-  const nextJob = () => {
+  const nextJob = (action) => {
     if (currentJobIndex < jobs.length - 1) {
       setCurrentJobIndex(prevIndex => prevIndex + 1);
     } else {
@@ -32,15 +31,18 @@ export default function App() {
   };
 
   const likeJob = () => {
-    alert("You liked this job!");
+    alert("Please login or sign up to like jobs!");
+    setCurrentView('signup');
   };
 
   const saveJob = () => {
-    alert("Job saved!");
+    alert("Please login or sign up to save jobs!");
+    setCurrentView('signup');
   };
 
   const goToApply = () => {
-    window.location.href = "apply.html?job=" + encodeURIComponent(jobs[currentJobIndex].title);
+    alert("Please login or sign up to apply for jobs!");
+    setCurrentView('signup');
   };
 
   const handleSignUpClick = () => {
@@ -57,7 +59,7 @@ export default function App() {
 
   // Render appropriate component based on currentView
   if (currentView === 'signup') {
-    return <SignUp onClose={handleClose} />;
+    return <SignUp onClose={handleClose} onLoginClick={handleLoginClick} />;
   }
 
   if (currentView === 'login') {
@@ -67,15 +69,21 @@ export default function App() {
   // Default home view
   return (
     <div>
+      <div className="main-header">
+        <h1>JobSwipe</h1>
+        <p>Swipe your way to your dream job</p>
+      </div>
+
       <div className="login-buttons">
         <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
         <a href="#" onClick={(e) => { e.preventDefault(); handleSignUpClick(); }}>Sign Up</a>
       </div>
+
       <div className="sidebar">
         <h2>JobSwipe</h2>
-        <a href="#" className="guest-action">Your Account</a>
-        <a href="#" className="guest-action">Settings</a>
-        <a href="#" className="guest-action">Help</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Your Account</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Settings</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Help</a>
         <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
       </div>
 
@@ -88,16 +96,16 @@ export default function App() {
           <div className="social-icons">
             <i className="fas fa-heart" onClick={likeJob}></i>
             <i className="fas fa-bookmark" onClick={saveJob}></i>
-            <i className="fas fa-share"></i>
+            <i className="fas fa-share" onClick={handleSignUpClick}></i>
           </div>
         </div>
         <div className="controls">
           <button onClick={previousJob}><i className="fas fa-arrow-left"></i></button>
           <div className="actions">
-            <button className="reject" onClick={previousJob}>Reject</button>
+            <button className="reject" onClick={() => nextJob('reject')}>Reject</button>
             <button className="apply" onClick={goToApply}>Apply</button>
           </div>
-          <button onClick={nextJob}><i className="fas fa-arrow-right"></i></button>
+          <button onClick={() => nextJob('apply')}><i className="fas fa-arrow-right"></i></button>
         </div>
       </div>
     </div>

@@ -1,20 +1,23 @@
 .container {
     width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding-left: 1rem;
     padding-right: 1rem;
+    padding-top: 0;  /* Remove top padding */
   }
   
   .signup-container {
+    width: 100%;
     max-width: 28rem;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
     padding: 1.5rem;
     background-color: white;
     position: relative;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: -5vh;  /* Add negative margin to move it up slightly */
   }
   
   .form-title {
@@ -100,6 +103,6 @@
   .form-check > .form-label {
     margin-top: 0.5em;
   }
-  
+
 
 
