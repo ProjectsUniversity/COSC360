@@ -14,7 +14,7 @@ export default function App() {
 
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
 
-  const nextJob = (action) => {
+  const nextJob = () => {
     if (currentJobIndex < jobs.length - 1) {
       setCurrentJobIndex(prevIndex => prevIndex + 1);
     } else {
@@ -69,11 +69,6 @@ export default function App() {
   // Default home view
   return (
     <div>
-      <div className="main-header">
-        <h1>JobSwipe</h1>
-        <p>Swipe your way to your dream job</p>
-      </div>
-
       <div className="login-buttons">
         <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
         <a href="#" onClick={(e) => { e.preventDefault(); handleSignUpClick(); }}>Sign Up</a>
@@ -87,8 +82,8 @@ export default function App() {
         <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
       </div>
 
-      <div className="main-content">
-        <div className="job-card" id="job-card">
+      <div className="main-content" style={{textAlign: "center"}}>
+        <div className="job-card" id="job-card" style={{margin: "auto", height: "80%", width: "35vw"}}>
           <img src="company-logo.png" alt="Company Logo" />
           <h2 id="job-title">{jobs[currentJobIndex].title}</h2>
           <h4 id="company-name">{jobs[currentJobIndex].company}</h4>
@@ -99,7 +94,7 @@ export default function App() {
             <i className="fas fa-share" onClick={handleSignUpClick}></i>
           </div>
         </div>
-        <div className="controls">
+        <div className="controls" style={{margin: "auto"}}>
           <button onClick={previousJob}><i className="fas fa-arrow-left"></i></button>
           <div className="actions">
             <button className="reject" onClick={() => nextJob('reject')}>Reject</button>

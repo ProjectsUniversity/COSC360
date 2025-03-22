@@ -12,8 +12,8 @@ export default function Login({ onClose, onSignUpClick }) {
   function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
-    // Here you would typically make an API call to authenticate the user
-    // For now, just redirect to homepage
+    // authenticate the user here
+    // For now
     window.location.href = '/homepage';
   }
 
@@ -34,7 +34,7 @@ export default function Login({ onClose, onSignUpClick }) {
 
   return (
     <>
-      <div className="container" style={{width: "100vw", height: "100vh"}}>
+      <div className="container" style={{minWidth: '80vw', minHeight: '100vh'}}>
         <div className="row justify-content-center align-items-center min-vh-100">
           <div className="col-md-6 col-lg-5">
             <div className="card shadow">
