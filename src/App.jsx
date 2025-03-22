@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import './styles/index.css';
 import './styles/homepage.css';
 import SignUp from './components/SignUp';
+import Login from './components/Login';
 
 export default function App() {
-  const [showSignUp, setShowSignUp] = useState(false);
+  // Add a currentView state to manage which component to show
+  const [currentView, setCurrentView] = useState('home');  // possible values: 'home', 'login', 'signup'
   const [jobs, setJobs] = useState([
     { title: "Software Engineer", company: "Tech Corp", description: "Looking for a skilled developer with experience in JavaScript and Python." },
     { title: "Product Manager", company: "Biz Solutions", description: "Seeking a highly motivated individual with leadership skills." },
@@ -41,26 +43,40 @@ export default function App() {
     window.location.href = "apply.html?job=" + encodeURIComponent(jobs[currentJobIndex].title);
   };
 
-  const handleSignUpClose = () => {
-    setShowSignUp(false);
+  const handleSignUpClick = () => {
+    setCurrentView('signup');
   };
 
-  if (showSignUp) {
-    return <SignUp onClose={handleSignUpClose} />;
+  const handleLoginClick = () => {
+    setCurrentView('login');
+  };
+
+  const handleClose = () => {
+    setCurrentView('home');
+  };
+
+  // Render appropriate component based on currentView
+  if (currentView === 'signup') {
+    return <SignUp onClose={handleClose} />;
   }
 
+  if (currentView === 'login') {
+    return <Login onClose={handleClose} onSignUpClick={handleSignUpClick} />;
+  }
+
+  // Default home view
   return (
     <div>
       <div className="login-buttons">
-        <a href="login.html">Login</a>
-        <a href="#" onClick={(e) => { e.preventDefault(); setShowSignUp(true); }}>Sign Up</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleSignUpClick(); }}>Sign Up</a>
       </div>
       <div className="sidebar">
         <h2>JobSwipe</h2>
-        <a href="userprofile.html">Your Account</a>
-        <a href="#">Settings</a>
-        <a href="#">Help</a>
-        <a href="login.html">Login</a>
+        <a href="#" className="guest-action">Your Account</a>
+        <a href="#" className="guest-action">Settings</a>
+        <a href="#" className="guest-action">Help</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleLoginClick(); }}>Login</a>
       </div>
 
       <div className="main-content">
