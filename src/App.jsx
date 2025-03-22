@@ -88,7 +88,7 @@ export default function App() {
           <h2 id="job-title">{jobs[currentJobIndex].title}</h2>
           <h4 id="company-name">{jobs[currentJobIndex].company}</h4>
           <p id="job-description">{jobs[currentJobIndex].description}</p>
-          <div className="social-icons">
+          <div className="social-icons" style={{gap: "1.5rem"}}>
             <i className="fas fa-heart" onClick={likeJob}></i>
             <i className="fas fa-bookmark" onClick={saveJob}></i>
             <i className="fas fa-share" onClick={handleSignUpClick}></i>
