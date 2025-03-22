@@ -2,7 +2,7 @@ import { useState } from "react";
 import '../styles/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function Login({ onClose, onSignUpClick }) {
+export default function Login({ onClose, onSignUpClick, onRecruiterLoginClick }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -15,6 +15,15 @@ export default function Login({ onClose, onSignUpClick }) {
     // authenticate the user here
     // For now
     window.location.href = '/homepage';
+  }
+
+  function handleRecruiterLogin(e) {
+    e.preventDefault();
+    if (onRecruiterLoginClick) {
+      onRecruiterLoginClick();
+    } else {
+      window.location.href = '/recruiter/login';
+    }
   }
 
   function handleFormDataChange(event) {
@@ -39,7 +48,7 @@ export default function Login({ onClose, onSignUpClick }) {
           <div className="col-md-6 col-lg-5">
             <div className="card shadow">
               <div className="card-body">
-                <h2 className="text-center mb-4">Login</h2>
+                <h2 className="text-center mb-4">Job Seeker Login</h2>
                 {onClose && (
                   <button 
                     onClick={onClose}
@@ -86,7 +95,7 @@ export default function Login({ onClose, onSignUpClick }) {
                       e.preventDefault();
                       onSignUpClick();
                     }}>Sign Up</a></p>
-                    <p><a href="#" onClick={() => window.location.href = '/recruiter/login'}>Login as a recruiter</a></p>
+                    <p><a href="#" onClick={handleRecruiterLogin}>Login as a recruiter</a></p>
                     <p><a href="#" className="text-muted">Forgot Password?</a></p>
                   </div>
                 </form>

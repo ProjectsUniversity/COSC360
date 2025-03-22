@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../HTML, CSS, JS/CSS/Recruiters/recLogin.css';
 
-const RecruiterLogin = () => {
-    const navigate = useNavigate();
+const RecruiterLogin = ({ onClose, onJobSeekerLoginClick, onRecruiterSignUpClick }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -49,14 +47,40 @@ const RecruiterLogin = () => {
         
         if (validateForm()) {
             console.log('Form submitted successfully:', formData);
-            // Navigate to dashboard using React Router
-            navigate('/recruiter/dashboard');
+            // Navigate to dashboard without React Router
+            window.location.href = '/recruiter/dashboard';
+        }
+    };
+
+    const handleJobSeekerLogin = (e) => {
+        e.preventDefault();
+        if (onJobSeekerLoginClick) {
+            onJobSeekerLoginClick();
+        } else {
+            window.location.href = '/login';
+        }
+    };
+
+    const handleRecruiterSignUp = (e) => {
+        e.preventDefault();
+        if (onRecruiterSignUpClick) {
+            onRecruiterSignUpClick();
+        } else {
+            window.location.href = '/recruiter/signup';
         }
     };
 
     return (
         <div className="container">
-            <div className="login-container">
+            <div className="login-container position-relative">
+                {onClose && (
+                    <button 
+                        onClick={onClose}
+                        className="btn-close position-absolute"
+                        style={{ top: '1rem', right: '1rem' }}
+                        aria-label="Close"
+                    />
+                )}
                 <h2 className="form-title">Recruiter Login</h2>
                 <form id="recruiterLoginForm" onSubmit={handleSubmit}>
                     <div className="mb-3">
@@ -96,8 +120,8 @@ const RecruiterLogin = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                     <div className="mt-3 text-center">
-                        <p>Don't have a recruiter account? <Link to="/recruiter/signup">Sign Up as Recruiter</Link></p>
-                        <Link to="/login">Login as a job seeker</Link>
+                        <p>Don't have a recruiter account? <a href="#" onClick={handleRecruiterSignUp}>Sign Up as Recruiter</a></p>
+                        <p><a href="#" onClick={handleJobSeekerLogin}>Login as a job seeker</a></p>
                         <p><a href="#" className="text-muted">Forgot Password?</a></p>
                     </div>
                 </form>

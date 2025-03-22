@@ -3,9 +3,11 @@ import './styles/index.css';
 import './styles/homepage.css';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
+import RecruiterLogin from './components/recruiters/RecruiterLogin';
+import RecruiterSignUp from './components/recruiters/RecruiterSignUp';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('home');  // possible values: 'home', 'login', 'signup'
+  const [currentView, setCurrentView] = useState('home');  // possible values: 'home', 'login', 'signup', 'recruiterLogin', 'recruiterSignup'
   const [jobs, setJobs] = useState([
     { title: "Software Engineer", company: "Tech Corp", description: "Looking for a skilled developer with experience in JavaScript and Python." },
     { title: "Product Manager", company: "Biz Solutions", description: "Seeking a highly motivated individual with leadership skills." },
@@ -53,6 +55,14 @@ export default function App() {
     setCurrentView('login');
   };
 
+  const handleRecruiterLoginClick = () => {
+    setCurrentView('recruiterLogin');
+  };
+
+  const handleRecruiterSignUpClick = () => {
+    setCurrentView('recruiterSignup');
+  };
+
   const handleClose = () => {
     setCurrentView('home');
   };
@@ -63,7 +73,27 @@ export default function App() {
   }
 
   if (currentView === 'login') {
-    return <Login onClose={handleClose} onSignUpClick={handleSignUpClick} />;
+    return <Login 
+      onClose={handleClose} 
+      onSignUpClick={handleSignUpClick} 
+      onRecruiterLoginClick={handleRecruiterLoginClick}
+    />;
+  }
+
+  if (currentView === 'recruiterLogin') {
+    return <RecruiterLogin 
+      onClose={handleClose} 
+      onJobSeekerLoginClick={() => setCurrentView('login')}
+      onRecruiterSignUpClick={handleRecruiterSignUpClick}
+    />;
+  }
+
+  if (currentView === 'recruiterSignup') {
+    return <RecruiterSignUp 
+      onClose={handleClose}
+      onLoginClick={() => setCurrentView('recruiterLogin')}
+      onJobSeekerSignUpClick={() => setCurrentView('signup')}
+    />;
   }
 
   // Default home view
