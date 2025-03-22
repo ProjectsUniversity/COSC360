@@ -49,7 +49,6 @@ body {
     text-align: center;
     border-radius: 10px;
     position: relative;
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
   }
   
   .job-card img {
@@ -104,22 +103,24 @@ body {
     background: green;
     color: white;
   }
-  
-  /* Card transition classes */
-  .card-hidden {
-    opacity: 0;
+
+  .login-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
   }
   
-  .card-visible {
-    opacity: 1;
-    transform: translateX(0);
+  .login-buttons a {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
   }
   
-  .card-move-right {
-    transform: translateX(100%);
+  .login-buttons a:nth-child(2) {
+    background-color: #2196F3;
   }
-  
-  .card-move-left {
-    transform: translateX(-100%);
-  }
-  
