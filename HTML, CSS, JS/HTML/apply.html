@@ -3,39 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/apply.css">
     <title>Apply for Job</title>
-    <script src="/HTML, CSS, JS/JS/apply.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">My Company</div>
-        <img src="company-logo.png" alt="Company Logo" width="100">
-        <h2>Apply for <span id="job-title">Job Position</span></h2>
-        <p class="company-link"><a href="#" id="company-website" target="company-dashboard.html">Visit Company Website</a></p>
-        <p><a href="homepage.html">&larr; Back to Jobs</a></p>
+    <main class="container">
+        <nav class="nav-back">
+            <a href="homepage.html" class="back-link">&larr; Back to Jobs</a>
+        </nav>
         
-        <form action="homepage.html">
-            <input type="text" id="full-name" placeholder="Full Name" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="tel" id="phone" placeholder="Phone Number" required>
-            <textarea id="cover-letter" placeholder="Cover Letter" rows="4" required></textarea>
-            <div class="file-upload">
-                <label for="resume">Upload Resume</label>
-                <input type="file" id="resume" accept=".pdf" required>
-            </div>
-            <button type="submit">Submit Application</button>
-        </form>
-    </div>
-    
+        <header class="application-header">
+            <h1>Apply for <span id="job-title">Job Position</span></h1>
+            <a href="#" id="company-website" class="company-link" target="_blank">Visit Company Website</a>
+        </header>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const jobTitle = params.get('job');
-        if (jobTitle) {
-            document.getElementById('job-title').innerText = jobTitle.replace('-', ' ');
-        }
-    </script>
+        <form class="application-form" action="homepage.html" method="POST">
+            <div class="form-group">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="full-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cover-letter">Cover Letter</label>
+                <textarea id="cover-letter" name="cover-letter" rows="6" required></textarea>
+            </div>
+
+            <div class="form-group file-upload">
+                <label for="resume">Resume (PDF)</label>
+                <input type="file" id="resume" name="resume" accept=".pdf" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Submit Application</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="/HTML, CSS, JS/JS/apply.js"></script>
 </body>
 </html>

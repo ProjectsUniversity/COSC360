@@ -48,6 +48,10 @@ function showJob(index) {
   document.getElementById('job-title').textContent = job.title;
   document.getElementById('company-name').textContent = job.company;
   document.getElementById('job-description').textContent = job.description;
+  
+  // Update navigation button states
+  document.querySelector('.prev-btn').disabled = index === 0;
+  document.querySelector('.next-btn').disabled = index === jobs.length - 1;
 }
 
 function hideOverlay() {
@@ -68,11 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Set up control buttons
+  // Set up navigation and control buttons
+  const prevBtn = document.querySelector('.prev-btn');
+  const nextBtn = document.querySelector('.next-btn');
   const rejectBtn = document.querySelector('.control-btn.reject');
   const likeBtn = document.querySelector('.control-btn.like');
   const applyBtn = document.querySelector('.control-btn.apply');
   
+  if (prevBtn) prevBtn.addEventListener('click', previousJob);
+  if (nextBtn) nextBtn.addEventListener('click', nextJob);
   if (rejectBtn) rejectBtn.addEventListener('click', () => nextJob());
   if (likeBtn) likeBtn.addEventListener('click', () => alert("Job liked!"));
   if (applyBtn) applyBtn.addEventListener('click', () => window.location.href = 'apply.html?job=' + encodeURIComponent(jobs[currentJobIndex].title));
