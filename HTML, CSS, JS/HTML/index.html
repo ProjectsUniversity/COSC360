@@ -14,13 +14,23 @@
     <div class="sidebar-header">
       <h1>JobSwipe</h1>
     </div>
-    <nav class="sidebar-nav">
-      <a href="#" class="sidebar-link active">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
+    <nav class="nav nav-pills flex-column flex-grow-1">
+        <a href="#" class="nav-link active">
+            <i class="fas fa-home me-2"></i>
+            Home
+        </a>
+        
+      <a href="#" class="nav-link disabled link-dark">
+        <i class="fas fa-bookmark me-2"></i>
+        Saved Jobs
+      </a>
+      <a href="#" class="nav-link disabled link-dark">
+        <i class="fas fa-file-alt me-2"></i>
+        Applications
       </a>
     </nav>
-    <div class="sidebar-footer">
+    <div class="m-auto p-3">
+        <hr class="dropdown-divider">
       <button class="btn btn-primary mt-3 w-100" onclick="window.location.href='signup.html'">
         <i class="fa-solid fa-rocket"></i>
         <span>Sign up</span>
