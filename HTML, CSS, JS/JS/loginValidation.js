@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginForm = document.getElementById("loginForm");
     
     function validateLoginForm(event) {
-        event.preventDefault();
-        
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         
@@ -21,12 +19,9 @@ document.addEventListener("DOMContentLoaded", function() {
             isValid = false;
         }
         
-        if (isValid) {
-            alert("Login successful!");
-            // loginForm.submit();
+        if (!isValid) {
+            event.preventDefault();
         }
-        
-        return false; 
     }
     
     if (loginForm) {
@@ -50,4 +45,4 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".invalid-feedback").forEach(el => el.remove());
         document.querySelectorAll(".is-invalid").forEach(el => el.classList.remove("is-invalid"));
     }
-}); 
+});

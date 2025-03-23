@@ -1,0 +1,491 @@
+:root {
+    --bg-color: #f5f5f5;
+    --sidebar-bg: #fff;
+    --text-color: #333;
+    --text-secondary: #666;
+    --primary-color: #2196f3;
+    --primary-hover: #1976d2;
+    --card-bg: #fff;
+    --card-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --border-color: #e0e0e0;
+}
+
+/* Light theme (default) */
+:root[data-theme="light"] {
+    --bg-color: #f4f4f4;
+    --text-color: #333;
+    --card-bg: white;
+    --sidebar-bg: #333;
+    --sidebar-text: #ffffff;
+    --border-color: #ddd;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --card-bg: #2d2d2d;
+    --sidebar-bg: #000000;
+    --sidebar-text: #e0e0e0;
+    --border-color: #404040;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --sidebar-bg: #2d2d2d;
+    --text-color: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --primary-color: #64b5f6;
+    --primary-hover: #42a5f5;
+    --card-bg: #2d2d2d;
+    --card-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    --border-color: #404040;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+  display: flex;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 5rem auto 2rem;
+  padding: 0 2rem;
+  margin-left: 35%;
+}
+
+.job-card-container {
+  position: relative;
+  height: 70vh;
+  margin-bottom: 2rem;
+}
+
+.job-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  transition: opacity 0.3s, transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+}
+
+.job-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.job-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+}
+
+.job-card h4 {
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.job-card p {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100%; 
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.company-logo {
+  width: 80px;
+  height: 80px;
+}
+
+#company-name {
+  color: #64748b;
+  font-size: 2rem;
+}
+
+.job-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1; 
+  position: relative; 
+  margin-bottom: 1.5rem;
+}
+
+.job-details span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+}
+
+.job-details p {
+  color: #64748b;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.job-meta {
+  display: flex;
+  gap: 2rem;
+  color: #64748b;
+  font-size: 1rem;
+  margin-top: auto; 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+}
+
+.job-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-controls {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.control-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn:hover {
+  transform: scale(1.1);
+}
+
+.control-btn.reject {
+  background-color: #ef4444;
+  color: white;
+}
+
+.control-btn.apply {
+  background-color: #22c55e;
+  color: white;
+}
+
+.control-btn.like {
+  background-color: #2563eb;
+  color: white;
+}
+
+.overlay-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.overlay-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-content h3 {
+    margin-bottom: 1rem;
+    color: #1e293b;
+}
+
+.overlay-content p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.overlay-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.login-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.login-buttons a {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.login-buttons a:nth-child(2) {
+  background-color: #2196F3;
+}
+
+.main-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-top: 20px;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--sidebar-bg);
+  padding: 2rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+  color: var(--sidebar-text);
+}
+
+.sidebar h2 {
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+}
+
+.sidebar a, 
+.sidebar button.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    color: var(--sidebar-text) !important;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.3s;
+    width: 100%;
+    text-align: left;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.sidebar a:hover, 
+.sidebar button.theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar a i, .sidebar button.theme-toggle i {
+  width: 20px;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 2rem;
+  width: calc(100% - 250px);
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.social-icons i {
+  cursor: pointer;
+  color: #64748b;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.social-icons i:hover {
+  color: #2563eb;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.controls button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.controls .actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.controls .reject {
+  background-color: #ef4444;
+  color: white;
+}
+
+.controls .apply {
+  background-color: #22c55e;
+  color: white;
+}
+
+.controls button:hover {
+  transform: scale(1.05);
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.3s;
+    background: transparent;
+    border: 1px solid var(--sidebar-text);
+    color: var(--sidebar-text);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.theme-toggle:hover {
+    background-color: var(--primary-color);
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    left: 0;
+  }
+
+  .container {
+    margin-left: 1rem;
+  }
+
+  .job-card {
+    padding: 1rem;
+  }
+
+  .job-meta {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .control-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 1rem;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

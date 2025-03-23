@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS job_board;
 USE job_board;
 
 
--- 2) USERS TABLE (job seekers)
+// 2) USERS TABLE (job seekers)
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 
--- 3) EMPLOYERS TABLE
+// 3) EMPLOYERS TABLE
 CREATE TABLE IF NOT EXISTS employers (
     employer_id INT AUTO_INCREMENT PRIMARY KEY,
     company_name VARCHAR(255) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS employers (
 );
 
 
--- 4) JOBS TABLE
+// 4) JOBS TABLE
 CREATE TABLE IF NOT EXISTS jobs (
     job_id INT AUTO_INCREMENT PRIMARY KEY,
     employer_id INT NOT NULL,
@@ -38,14 +38,32 @@ CREATE TABLE IF NOT EXISTS jobs (
 );
 
 
--- 5) APPLICATIONS TABLE (who applied to which job)
+// 5) APPLICATIONS TABLE (who applied to which job)
 CREATE TABLE IF NOT EXISTS applications (
     application_id INT AUTO_INCREMENT PRIMARY KEY,
     job_id INT NOT NULL,
     user_id INT NOT NULL,  -- references 'users' table
     cover_letter TEXT,
+    resume_path VARCHAR(255),  -- path to the uploaded resume file for this specific application
     status VARCHAR(50) DEFAULT 'Pending',  -- e.g., Pending, Shortlisted, Hired, Rejected
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (job_id) REFERENCES jobs(job_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+
+// 6) SAVED_JOBS TABLE (bookmarked jobs by users)
+CREATE TABLE IF NOT EXISTS saved_jobs (
+    saved_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    job_id INT NOT NULL,
+    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id),
+    UNIQUE KEY unique_saved_job (user_id, job_id)  -- Prevent duplicate saves
+);
+
+-- Add indexes for saved_jobs queries
+CREATE INDEX idx_saved_jobs_user ON saved_jobs(user_id);
+CREATE INDEX idx_saved_jobs_job ON saved_jobs(job_id);
+CREATE INDEX idx_saved_jobs_date ON saved_jobs(saved_at DESC);

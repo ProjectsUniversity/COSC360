@@ -1,0 +1,240 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    background-color: #f5f5f5;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: #2196f3;
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 40px;
+    width: calc(100% - 250px);
+}
+
+.main-content h1 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.saved-jobs-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.job-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.job-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.job-title-company {
+    flex-grow: 1;
+}
+
+.job-title-company h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #333;
+}
+
+.job-title-company h3 {
+    margin: 5px 0 0;
+    font-size: 1.1em;
+    color: #666;
+}
+
+.job-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 15px 0;
+    color: #666;
+}
+
+.job-details p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.job-details i {
+    margin-right: 8px;
+    color: #2196f3;
+}
+
+.job-description {
+    color: #555;
+    line-height: 1.6;
+    margin: 15px 0;
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+}
+
+.job-description.expanded {
+    max-height: none;
+}
+
+.job-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.apply-btn {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+.apply-btn:hover {
+    background-color: #1976d2;
+}
+
+.unsave-btn {
+    background: none;
+    border: none;
+    color: #2196f3;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.unsave-btn:hover {
+    color: #1976d2;
+}
+
+.expand-btn {
+    background: none;
+    border: none;
+    color: #2196f3;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    margin-right: auto;
+    transition: color 0.3s;
+}
+
+.expand-btn:hover {
+    color: #1976d2;
+    text-decoration: underline;
+}
+
+.no-jobs-message {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.no-jobs-message i {
+    font-size: 3em;
+    color: #2196f3;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.no-jobs-message p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.browse-jobs-btn {
+    display: inline-block;
+    background-color: #2196f3;
+    color: white;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+.browse-jobs-btn:hover {
+    background-color: #1976d2;
+}
+
+/* Animation for removing job cards */
+.job-card {
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .main-content {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .job-details {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
