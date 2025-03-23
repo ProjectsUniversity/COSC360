@@ -6,178 +6,116 @@ body {
     display: flex;
 }
 
-.sidebar {
-    width: 250px;
-    background: #333;
-    color: white;
-    padding: 20px;
-    height: 100vh;
-    position: fixed;
+/* Company Header */
+.company-header {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.sidebar a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 10px 0;
+.company-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 1rem;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
 }
 
-.sidebar a:hover {
-    background: #444;
+.company-tags .badge {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
 }
 
-.main-content {
-    margin-left: 250px;
-    padding: 20px;
-    width: calc(100% - 250px);
+/* Job Filters */
+.job-filters .form-control,
+.job-filters .form-select,
+.job-filters .input-group-text {
+    border-color: #e5e7eb;
+    padding: 0.75rem 1rem;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 20px auto;
+.job-filters .input-group-text {
+    color: #6b7280;
 }
 
-.section {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
+.job-filters .form-control:focus,
+.job-filters .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
 }
 
-.jobs-list {
-    margin-top: 20px;
-}
-
+/* Job Cards */
 .job-card {
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: transform 0.2s;
+    border: none;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
 }
 
 .job-card:hover {
-    transform: translateX(5px);
-    border-left: 3px solid #007BFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.job-info {
-    flex: 1;
+.job-card .card-body {
+    padding: 1.5rem;
 }
 
-.job-actions {
-    display: flex;
-    gap: 10px;
+.job-card .badge {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
 }
 
-.filters {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
+.job-card .btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
 }
 
-.filter-button {
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    background: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+/* Main Content Layout */
+.main-content {
+    margin-left: 280px;
+    padding: 2rem;
+    width: calc(100% - 280px);
 }
 
-.filter-button:hover {
-    background: #f8f9fa;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+    }
 
-.apply-button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-}
+    .company-header {
+        padding: 1rem;
+    }
 
-.apply-button:hover {
-    background: #218838;
-}
+    .company-logo {
+        width: 60px;
+        height: 60px;
+    }
 
-.company-info {
-    margin-top: 15px;
-    color: #666;
-}
+    .job-filters .d-flex {
+        flex-direction: column;
+    }
 
-.job-status {
-    background: #e9ecef;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    color: #666;
-}
+    .job-filters .input-group,
+    .job-filters .form-select {
+        max-width: 100% !important;
+        width: 100%;
+    }
 
-.job-details {
-    margin: 10px 0;
-    color: #666;
-}
+    .job-card .d-flex {
+        flex-direction: column;
+    }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    margin: 15% auto;
-    padding: 20px;
-    width: 50%;
-    max-width: 500px;
-    border-radius: 10px;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.form-group select,
-.form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.form-group select:focus,
-.form-group input:focus {
-    outline: none;
-    border-color: #007BFF;
+    .job-card .btn-primary {
+        margin-top: 1rem;
+        width: 100%;
+    }
 }
