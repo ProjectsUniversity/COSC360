@@ -39,6 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  height: 100%; 
 }
 
 .company-info {
@@ -50,13 +51,12 @@ body {
 .company-logo {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
+
 }
 
-.company-info h3 {
+#company-name {
   color: #64748b;
-  font-size: 1.3rem;
+  font-size: 2rem;
 }
 
 .job-card h2 {
@@ -68,6 +68,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  flex: 1; 
+  position: relative; 
 }
 
 .job-details p {
@@ -81,6 +83,11 @@ body {
   gap: 2rem;
   color: #64748b;
   font-size: 1rem;
+  margin-top: auto; 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
 }
 
 .job-meta span {
