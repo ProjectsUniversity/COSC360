@@ -11,7 +11,11 @@ require_once 'config.php';
 
 // Fetch recruiter data
 $employer_id = $_SESSION['employer_id'];
-$company_name = $_SESSION['company_name'] ?? 'User';
+$stmt = $pdo->prepare("SELECT * FROM employers WHERE employer_id = ?");
+$stmt->execute([$employer_id]);
+$employer = $stmt->fetch(PDO::FETCH_ASSOC);
+$company_name = $employer['company_name'] ?? 'User';
+$logo_path = $employer['logo_path'] ?? 'images/default-company-logo.png';
 
 // Initialize statistics with default values
 $active_jobs = 0;
@@ -78,7 +82,7 @@ try {
                     </a>
                 </div>
                 <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
+                <ul class="nav nav-pills flex-column w-1">
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link active">
                             <i class="fa-solid fa-chart-simple"></i> Dashboard
@@ -117,11 +121,14 @@ try {
                 </div>
             <?php endif; ?>
 
-            <header>
-                <div class="dashboard-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1 class="mb-0">Recruiter Dashboard</h1>
-                        <p class="text-muted">Welcome back, <?php echo htmlspecialchars($company_name); ?>!</p>
+            <header class="d-flex justify-content-between align-items-center" style="width: 100%; height: 100px;">
+                <div class="dashboard-header d-flex justify-content-between align-items-center" style="width: 100%; height: 100px;">
+                    <div class="d-flex align-items-center">
+                        <img src="<?php echo htmlspecialchars($logo_path); ?>" alt="Company Logo" class="company-logo-small">
+                        <div>
+                            <h1 class="mb-0">Recruiter Dashboard</h1>
+                            <p class="text-muted">Welcome back, <?php echo htmlspecialchars($company_name); ?>!</p>
+                        </div>
                     </div>
                     <a href="addJobs.php" class="btn btn-success">
                         <i class="fa-solid fa-plus"></i> Post New Job
@@ -192,14 +199,14 @@ try {
                                         </div>
                                         <p class="card-text mt-3"><?php echo htmlspecialchars($job['description']); ?></p>
                                         <div class="job-details mt-3">
-                                            <span class="me-3"><i class="fas fa-map-marker-alt text-muted"></i> <?php echo htmlspecialchars($job['location']); ?></span>
-                                            <span class="me-3"><i class="fas fa-dollar-sign text-muted"></i> <?php echo number_format($job['salary']); ?></span>
+                                            <span><i class="fas fa-map-marker-alt text-muted"></i> <?php echo htmlspecialchars($job['location']); ?></span>
+                                            <span><i class="fas fa-dollar-sign text-muted"></i> <?php echo number_format($job['salary']); ?></span>
                                             <span><i class="fas fa-clock text-muted"></i> Posted <?php echo timeAgo($job['created_at']); ?></span>
                                         </div>
                                         <hr>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div class="job-stats">
-                                                <span class="me-3">
+                                                <span>
                                                     <i class="fas fa-user text-primary"></i> <?php echo $job['applicants_count']; ?> Applicants
                                                 </span>
                                             </div>
@@ -239,6 +246,7 @@ function getStatusColor($status) {
         case 'on_hold':
             return 'warning';
         case 'inactive':
+        case 'closed':
             return 'danger';
         default:
             return 'secondary';
@@ -246,19 +254,23 @@ function getStatusColor($status) {
 }
 
 function timeAgo($datetime) {
-    $timestamp = strtotime($datetime);
-    $diff = time() - $timestamp;
+    $time = time() - strtotime($datetime);
+    $time = ($time < 1) ? 1 : $time;
     
-    if ($diff < 60) {
-        return "just now";
-    } elseif ($diff < 3600) {
-        return floor($diff / 60) . " minutes ago";
-    } elseif ($diff < 86400) {
-        return floor($diff / 3600) . " hours ago";
-    } elseif ($diff < 604800) {
-        return floor($diff / 86400) . " days ago";
-    } else {
-        return date("M j, Y", $timestamp);
+    $tokens = array (
+        31536000 => 'year',
+        2592000 => 'month',
+        604800 => 'week',
+        86400 => 'day',
+        3600 => 'hour',
+        60 => 'minute',
+        1 => 'second'
+    );
+
+    foreach ($tokens as $unit => $text) {
+        if ($time < $unit) continue;
+        $numberOfUnits = floor($time / $unit);
+        return $numberOfUnits . ' ' . $text . (($numberOfUnits > 1) ? 's' : '') . ' ago';
     }
 }
 ?>
