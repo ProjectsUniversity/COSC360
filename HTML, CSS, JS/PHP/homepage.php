@@ -3,7 +3,7 @@ session_start();
 require_once('config.php');
 
 try {
-    // Update the SQL query to include employer_id
+    // Update the SQL query to remove logo references
     $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
                           e.company_name, e.employer_id
                           FROM jobs j 
@@ -66,7 +66,6 @@ try {
 
     <div class="main-content">
         <div class="job-card" id="job-card">
-            <img src="company-logo.png" alt="Company Logo" id="company-logo" />
             <h2 id="job-title"></h2>
             <h4 id="company-name" onclick="viewCompanyProfile()">
                 <a href="#" class="company-link" id="company-link"></a>

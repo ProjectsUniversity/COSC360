@@ -114,9 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="container">
         <div class="header">
-            <img src="<?php echo htmlspecialchars($job['logo_url'] ?? '../assets/default-company-logo.png'); ?>" 
-                 alt="<?php echo htmlspecialchars($job['company_name']); ?>" 
-                 class="company-logo">
             <h1><?php echo htmlspecialchars($job['title']); ?></h1>
             <p><?php echo htmlspecialchars($job['company_name']); ?> • <?php echo htmlspecialchars($job['location']); ?></p>
         </div>

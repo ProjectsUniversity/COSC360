@@ -25,7 +25,6 @@ function formatDate(dateString) {
 function displayJob(index) {
     if (index >= 0 && index < jobs.length) {
         const job = jobs[index];
-        document.getElementById('company-logo').src = 'company-logo.png';
         document.getElementById('job-title').textContent = job.title;
         document.getElementById('company-name').textContent = job.company_name;
         document.getElementById('job-description').textContent = job.description;

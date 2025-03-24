@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS employers (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     location VARCHAR(255),
-    logo_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

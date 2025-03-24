@@ -15,7 +15,6 @@ $stmt = $pdo->prepare("SELECT * FROM employers WHERE employer_id = ?");
 $stmt->execute([$employer_id]);
 $employer = $stmt->fetch(PDO::FETCH_ASSOC);
 $company_name = $employer['company_name'] ?? 'User';
-$logo_path = $employer['logo_path'] ?? 'images/default-company-logo.png';
 
 // Initialize statistics with default values
 $active_jobs = 0;
@@ -124,7 +123,6 @@ try {
             <header class="d-flex justify-content-between align-items-center" style="width: 100%; height: 100px;">
                 <div class="dashboard-header d-flex justify-content-between align-items-center" style="width: 100%; height: 100px;">
                     <div class="d-flex align-items-center">
-                        <img src="<?php echo htmlspecialchars($logo_path); ?>" alt="Company Logo" class="company-logo-small">
                         <div>
                             <h1 class="mb-0">Recruiter Dashboard</h1>
                             <p class="text-muted">Welcome back, <?php echo htmlspecialchars($company_name); ?>!</p>

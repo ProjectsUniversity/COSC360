@@ -121,9 +121,6 @@ function timeAgo($datetime) {
 
             <div class="company-profile section">
                 <div class="profile-header">
-                    <img src="<?php echo htmlspecialchars($employer['logo_url'] ?? '../assets/default-company-logo.png'); ?>" 
-                         alt="<?php echo htmlspecialchars($employer['company_name']); ?>" 
-                         class="company-logo">
                     <div class="profile-info">
                         <h1><?php echo htmlspecialchars($employer['company_name']); ?></h1>
                         <div class="company-stats">

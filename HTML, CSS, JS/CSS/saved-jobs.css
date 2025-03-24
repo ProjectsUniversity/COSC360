@@ -148,13 +148,6 @@ body {
     gap: 15px;
 }
 
-.company-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
 .job-title-company {
     flex-grow: 1;
 }

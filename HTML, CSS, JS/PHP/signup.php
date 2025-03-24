@@ -47,49 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $company_name = htmlspecialchars($_POST['company_name'] ?? '', ENT_QUOTES, 'UTF-8');
             
-            // Handle logo upload
-            $logo_path = null;
-            if (isset($_FILES['companyLogo']) && $_FILES['companyLogo']['error'] === UPLOAD_ERR_OK) {
-                $file_info = pathinfo($_FILES['companyLogo']['name']);
-                $ext = strtolower($file_info['extension']);
-                
-                // Validate file type
-                $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-                if (!in_array($ext, $allowed_types)) {
-                    throw new Exception('Invalid file type. Only JPG, PNG and GIF files are allowed.');
-                }
-                
-                // Validate file size (2MB max)
-                if ($_FILES['companyLogo']['size'] > 2 * 1024 * 1024) {
-                    throw new Exception('File is too large. Maximum size is 2MB.');
-                }
-                
-                // Generate unique filename
-                $filename = uniqid('logo_') . '.' . $ext;
-                $upload_dir = dirname(dirname(dirname(__FILE__))) . '/Uploads/logos';
-                
-                // Create directory if it doesn't exist
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
-                }
-                
-                $upload_path = $upload_dir . '/' . $filename;
-                
-                // Ensure the directory is writable
-                if (!is_writable($upload_dir)) {
-                    throw new Exception('Upload directory is not writable. Please check permissions.');
-                }
-                
-                if (move_uploaded_file($_FILES['companyLogo']['tmp_name'], $upload_path)) {
-                    $logo_path = 'Uploads/logos/' . $filename;
-                } else {
-                    throw new Exception('Failed to upload logo. Error: ' . error_get_last()['message']);
-                }
-            }
-            
-            $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location, logo_path) 
+            $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location) 
                                   VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$company_name, $email, $password_hash, $location, $logo_path]);
+            $stmt->execute([$company_name, $email, $password_hash, $location]);
             
             $_SESSION['employer_id'] = $pdo->lastInsertId();
             $_SESSION['user_type'] = 'employer';
@@ -141,10 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="mb-3">
                         <label for="company_name" class="form-label">Company Name</label>
                         <input type="text" class="form-control" name="company_name" id="company_name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="companyLogo" class="form-label">Company Logo</label>
-                        <input type="file" class="form-control" name="companyLogo" id="companyLogo">
                     </div>
                 </div>
 

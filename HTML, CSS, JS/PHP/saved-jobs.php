@@ -57,7 +57,6 @@ try {
                 <?php foreach ($savedJobs as $job): ?>
                     <div class="job-card" data-job-id="<?php echo htmlspecialchars($job['job_id']); ?>">
                         <div class="job-header">
-                            <img src="company-logo.png" alt="Company Logo" class="company-logo">
                             <div class="job-title-company">
                                 <h2><?php echo htmlspecialchars($job['title']); ?></h2>
                                 <h3><?php echo htmlspecialchars($job['company_name']); ?></h3>
