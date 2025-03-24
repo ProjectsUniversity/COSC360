@@ -57,3 +57,40 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
 CREATE INDEX idx_saved_jobs_user ON saved_jobs(user_id);
 CREATE INDEX idx_saved_jobs_job ON saved_jobs(job_id);
 CREATE INDEX idx_saved_jobs_date ON saved_jobs(saved_at DESC);
+
+INSERT INTO employers (company_name, email, password_hash, location)
+VALUES ('Tech Solutions Inc', 'hr@techsolutions.com', 'hashed_password_123', 'New York');
+INSERT INTO employers (company_name, email, password_hash, location)
+VALUES ('InnoVista Corp.', 'careers@innovista.com', 'hashed_pass_456', 'San Francisco');
+INSERT INTO employers (company_name, email, password_hash, location)
+VALUES ('Global Ventures LLC', 'recruitment@globalventures.com', 'hashed_pass_789', 'Chicago');
+INSERT INTO jobs (employer_id, title, description, location, salary, status)
+VALUES (
+    1,
+    'Software Engineer',
+    'Develop and maintain web applications using modern frameworks.',
+    'New York',
+    90000.00,
+    'active'
+);
+
+INSERT INTO jobs (employer_id, title, description, location, salary, status)
+VALUES (
+    2,
+    'Data Analyst',
+    'Collect, process, and perform statistical analysis on large datasets.',
+    'San Francisco',
+    75000.00,
+    'active'
+);
+
+INSERT INTO jobs (employer_id, title, description, location, salary, status)
+VALUES (
+    3,
+    'Project Manager',
+    'Plan, execute, and oversee projects for our international clients.',
+    'Chicago',
+    105000.00,
+    'active'
+);
+
