@@ -22,23 +22,26 @@ try {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Jobs - JobSwipe</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../CSS/saved-jobs.css">
+    <script src="../JS/theme.js" defer></script>
 </head>
 <body>
     <div class="sidebar">
         <h2>JobSwipe</h2>
         <a href="homepage.php"><i class="fas fa-home"></i> Home</a>
-        <a href="userprofile.php"><i class="fas fa-user"></i> Your Account</a>
+        <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
         <a href="saved-jobs.php" class="active"><i class="fas fa-bookmark"></i> Saved Jobs</a>
         <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
-        <a href="#" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        <a href="help.php"><i class="fas fa-question-circle"></i> Help</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i> Dark Mode
+        </button>
     </div>
 
     <div class="main-content">
@@ -80,5 +83,12 @@ try {
 
     <script src="../JS/logout.js"></script>
     <script src="../JS/saved-jobs.js"></script>
+    <script>
+        // Set initial state of theme toggle button
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+    </script>
 </body>
 </html>

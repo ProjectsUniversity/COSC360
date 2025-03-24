@@ -7,14 +7,22 @@ if (!jobId) {
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('application-form');
+    
     if (form) {
         form.addEventListener('submit', function(event) {
             const coverLetter = document.getElementById('cover-letter').value.trim();
-            const resume = document.getElementById('resume').value;
             
-            if (!coverLetter || !resume) {
+            if (!coverLetter) {
                 event.preventDefault();
-                alert('Please fill in all required fields');
+                alert('Please enter a cover letter');
+                return;
+            }
+            
+            // Show loading state
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
             }
         });
     }

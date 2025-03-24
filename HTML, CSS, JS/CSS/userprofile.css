@@ -1,168 +1,401 @@
-body {
-    font-family: Arial, sans-serif;
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --container-bg: #fff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --heading-color: #333;
+    --link-color: #2196f3;
+    --highlight-color: #2196f3;
+    --highlight-hover: #1976d2;
+    --border-color: #ddd;
+    --sidebar-bg: #fff;
+    --sidebar-active-bg: #e3f2fd;
+    --sidebar-active-color: #2196f3;
+    --card-bg: #fff;
+    --card-text: #555;
+    --card-title: #333;
+    --card-subtitle: #666;
+    --icon-color: #2196f3;
+    --button-bg: #2196f3;
+    --button-text: #fff;
+    --button-hover: #1976d2;
+    --modal-bg: #fff;
+    --modal-text: #333;
+    --input-bg: #fff;
+    --input-border: #ddd;
+    --status-pending-bg: #fff3cd;
+    --status-pending-color: #856404;
+    --status-shortlisted-bg: #d1ecf1;
+    --status-shortlisted-color: #0c5460;
+    --status-hired-bg: #d4edda;
+    --status-hired-color: #155724;
+    --status-rejected-bg: #f8d7da;
+    --status-rejected-color: #721c24;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #f0f0f0;
+    --container-bg: #2d2d2d;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --heading-color: #e0e0e0;
+    --link-color: #64b5f6;
+    --highlight-color: #2196f3;
+    --highlight-hover: #1976d2;
+    --border-color: #444;
+    --sidebar-bg: #2d2d2d;
+    --sidebar-active-bg: #1e3a5f;
+    --sidebar-active-color: #64b5f6;
+    --card-bg: #333;
+    --card-text: #e0e0e0;
+    --card-title: #f0f0f0;
+    --card-subtitle: #bdbdbd;
+    --icon-color: #64b5f6;
+    --button-bg: #2196f3;
+    --button-text: #fff;
+    --button-hover: #1976d2;
+    --modal-bg: #333;
+    --modal-text: #f0f0f0;
+    --input-bg: #424242;
+    --input-border: #555;
+    --status-pending-bg: #423c19;
+    --status-pending-color: #ffe69c;
+    --status-shortlisted-bg: #0a3d4f;
+    --status-shortlisted-color: #a8e1ec;
+    --status-hired-bg: #0d2e13;
+    --status-hired-color: #a3d9a5;
+    --status-rejected-bg: #471217;
+    --status-rejected-color: #f8d7da;
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
     display: flex;
 }
 
 .sidebar {
     width: 250px;
-    background: #333;
-    color: white;
-    padding: 20px;
     height: 100vh;
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    box-shadow: 2px 0 5px var(--shadow-color);
     position: fixed;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: var(--highlight-color);
 }
 
 .sidebar a {
     display: block;
-    color: white;
+    padding: 15px;
+    color: var(--text-color);
     text-decoration: none;
-    padding: 10px 0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
-.sidebar a:hover {
-    background: #444;
+.sidebar a:hover, .sidebar a.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-color);
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.theme-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+    text-align: left;
+    color: var(--text-color);
+    font-size: 1rem;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-color);
+}
+
+.theme-toggle i {
+    margin-right: 10px;
 }
 
 .main-content {
     margin-left: 250px;
-    padding: 20px;
+    padding: 40px;
     width: calc(100% - 250px);
 }
 
-.container, .section {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.main-content h1 {
+    margin-bottom: 30px;
+    color: var(--heading-color);
 }
 
 .container {
-    max-width: 800px;
-    margin: 20px auto;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.section {
-    margin-bottom: 30px;
+.success-message, .error-message {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.success-message {
+    background-color: var(--status-hired-bg);
+    color: var(--status-hired-color);
+}
+
+.error-message {
+    background-color: var(--status-rejected-bg);
+    color: var(--status-rejected-color);
 }
 
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 .profile-picture {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #007BFF;
+    border: 4px solid var(--highlight-color);
+}
+
+.profile-info {
+    margin-left: 20px;
+    flex-grow: 1;
 }
 
 .profile-info h1 {
-    margin: 0 0 10px 0;
-    color: #333;
+    margin-bottom: 5px;
+    color: var(--card-title);
 }
 
-.section h2 {
-    margin-top: 0;
-    color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.profile-info p {
+    color: var(--card-subtitle);
+    margin-bottom: 10px;
 }
 
 .edit-button {
-    background: #007BFF;
-    color: white;
+    background-color: var(--button-bg);
+    color: var(--button-text);
     border: none;
     padding: 8px 15px;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
 .edit-button:hover {
-    background: #0056b3;
+    background-color: var(--button-hover);
 }
 
-.skills-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
 
-.skill-tag {
-    background: #e9ecef;
-    padding: 8px 15px;
-    border-radius: 20px;
-    color: #333;
-    font-size: 14px;
+.section h2 {
+    margin-bottom: 20px;
+    color: var(--card-title);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.applications-list {
+    display: grid;
+    gap: 15px;
 }
 
 .application-item {
     padding: 15px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
     border-radius: 5px;
+    background-color: var(--container-bg);
+    box-shadow: 0 1px 3px var(--shadow-color);
     transition: transform 0.2s;
 }
 
 .application-item:hover {
-    transform: translateX(5px);
-    border-left: 3px solid #007BFF;
+    transform: translateY(-2px);
 }
 
+.application-item h3 {
+    margin-bottom: 10px;
+    color: var(--card-title);
+}
+
+.application-item p {
+    margin: 5px 0;
+    color: var(--card-text);
+}
+
+.status-pending {
+    background-color: var(--status-pending-bg);
+    color: var(--status-pending-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.status-shortlisted {
+    background-color: var(--status-shortlisted-bg);
+    color: var(--status-shortlisted-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.status-hired {
+    background-color: var(--status-hired-bg);
+    color: var(--status-hired-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.status-rejected {
+    background-color: var(--status-rejected-bg);
+    color: var(--status-rejected-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Modal styles */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 1;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
-    background: white;
-    margin: 15% auto;
+    background-color: var(--modal-bg);
+    margin: 10% auto;
     padding: 20px;
-    width: 50%;
-    border-radius: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    width: 80%;
+    max-width: 500px;
     position: relative;
+    color: var(--modal-text);
 }
 
-.modal input, .modal textarea {
+.close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: var(--card-subtitle);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--card-title);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
     width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.resume-section {
-    padding: 15px;
-    border: 2px dashed #ddd;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.resume-file {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding: 10px;
-    background: #f8f9fa;
-    border-radius: 5px;
-    margin-top: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
 }
 
-.resume-file i {
-    margin-right: 10px;
-    color: #007BFF;
-} 
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 15px 10px;
+    }
+    
+    .sidebar h2 {
+        display: none;
+    }
+    
+    .sidebar a span {
+        display: none;
+    }
+    
+    .sidebar a i {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+    
+    .theme-toggle {
+        justify-content: center;
+        padding: 10px;
+    }
+    
+    .theme-toggle span {
+        display: none;
+    }
+    
+    .theme-toggle i {
+        margin-right: 0;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+        padding: 20px;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-info {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}

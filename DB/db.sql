@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     location VARCHAR(255),
-    resume_link VARCHAR(255),          -- optional link or file reference
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -37,7 +36,6 @@ CREATE TABLE IF NOT EXISTS applications (
     job_id INT NOT NULL,
     user_id INT NOT NULL,  -- references 'users' table
     cover_letter TEXT,
-    resume_path VARCHAR(255),  -- path to the uploaded resume file for this specific application
     status VARCHAR(50) DEFAULT 'Pending',  -- e.g., Pending, Shortlisted, Hired, Rejected
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (job_id) REFERENCES jobs(job_id),

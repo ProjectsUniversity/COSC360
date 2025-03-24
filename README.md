@@ -63,3 +63,15 @@ The project is organized into the following main directories:
 - Backend API integration for persistent data storage
 - Enhanced matching algorithm based on user skills and job requirements
 - Messaging system for direct communication between recruiters and applicants
+
+## System Requirements
+
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Web server with appropriate configurations
+
+## Setup Instructions
+
+1. Import the database schema from `DB/db.sql`
+2. Configure database connection in `PHP/config.php`
+3. Start using the application!
