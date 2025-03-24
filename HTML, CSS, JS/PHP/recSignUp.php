@@ -1,6 +1,6 @@
 <?php
 session_start();
-//require_once 'config.php'; // Make sure to create this file with database credentials
+require_once 'config.php'; // Make sure to create this file with database credentials
 
 // Initialize variables to store form data and errors
 $email = $password = $companyName = $jobTitle = $companySize = $industry = "";
@@ -35,19 +35,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
         try {
-            $sql = "INSERT INTO recruiters (email, password, company_name, job_title, company_size, industry) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssss", $email, $hashedPassword, $companyName, $jobTitle, $companySize, $industry);
+            // Check if email already exists
+            $checkStmt = $pdo->prepare("SELECT employer_id FROM employers WHERE email = ?");
+            $checkStmt->execute([$email]);
             
-            if ($stmt->execute()) {
-                $_SESSION['success'] = "Registration successful!";
-                header("Location: recLogin.php");
-                exit();
+            if ($checkStmt->fetch()) {
+                $errors['email'] = "Email already registered";
             } else {
-                $errors['db'] = "Registration failed. Please try again.";
+                // Insert new employer with all fields
+                $sql = "INSERT INTO employers (company_name, email, password_hash, location) 
+                        VALUES (?, ?, ?, ?)";
+                $stmt = $pdo->prepare($sql);
+                
+                if ($stmt->execute([$companyName, $email, $hashedPassword, $industry])) {
+                    $_SESSION['employer_id'] = $pdo->lastInsertId();
+                    $_SESSION['company_name'] = $companyName;
+                    $_SESSION['success'] = "Registration successful!";
+                    header("Location: dashboard.php");
+                    exit();
+                } else {
+                    $errors['db'] = "Registration failed. Please try again.";
+                }
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             $errors['db'] = "Database error: " . $e->getMessage();
         }
     }
