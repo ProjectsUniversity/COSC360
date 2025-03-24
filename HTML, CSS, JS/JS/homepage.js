@@ -39,11 +39,8 @@ function displayJob(index) {
 }
 
 function nextJob(action) {
-    if (action === 'reject') {
+    if (action === 'reject' || action === 'apply') {
         currentJobIndex++;
-    } else if (action === 'apply') {
-        applyToJob();
-        return;
     }
     
     if (currentJobIndex >= jobs.length) {

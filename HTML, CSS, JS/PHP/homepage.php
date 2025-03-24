@@ -3,10 +3,12 @@ session_start();
 require_once('config.php');
 
 try {
+    // Update the SQL query to include employer_id
     $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
                           e.company_name, e.employer_id
                           FROM jobs j 
                           JOIN employers e ON j.employer_id = e.employer_id 
+                          WHERE j.status = 'active'
                           ORDER BY j.created_at DESC");
     $stmt->execute();
     $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -27,6 +29,21 @@ try {
     <link rel="stylesheet" href="../CSS/homepage.css" />
     <script src="../JS/homepage.js" defer></script>
     <script src="../JS/logout.js" defer></script>
+    <style>
+        .company-link {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .company-link:hover {
+            color: var(--highlight-color);
+        }
+
+        #company-name {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -45,14 +62,15 @@ try {
                 <i class="fas fa-moon"></i> Dark Mode
             </button>
         <?php endif; ?>
-        <a href="help.php"><i class="fas fa-question-circle"></i> Help</a>
     </div>
 
     <div class="main-content">
         <div class="job-card" id="job-card">
             <img src="company-logo.png" alt="Company Logo" id="company-logo" />
             <h2 id="job-title"></h2>
-            <h4 id="company-name"></h4>
+            <h4 id="company-name" onclick="viewCompanyProfile()">
+                <a href="#" class="company-link" id="company-link"></a>
+            </h4>
             <p id="job-description"></p>
             <div class="job-details">
                 <span id="job-location"><i class="fas fa-map-marker-alt"></i></span>
@@ -68,17 +86,39 @@ try {
             </div>
         </div>
         <div class="controls">
-            <button onclick="nextJob('reject')"><i class="fas fa-arrow-left"></i></button>
             <div class="actions">
                 <button class="reject" onclick="nextJob('reject')">Reject</button>
                 <button class="apply" onclick="applyToJob()">Apply</button>
             </div>
-            <button onclick="nextJob('apply')"><i class="fas fa-arrow-right"></i></button>
+            <button onclick="nextJob('reject')"><i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
     <script>
         const jobs = <?php echo $jobsJson; ?>;
+        let currentIndex = 0;
+
+        function viewCompanyProfile() {
+            const currentJob = jobs[currentIndex];
+            if (currentJob && currentJob.employer_id) {
+                window.location.href = `company-dashboard.php?employer_id=${currentJob.employer_id}`;
+            }
+        }
+        
+        function updateJobCard() {
+            const job = jobs[currentIndex];
+            document.getElementById('job-title').textContent = job.title;
+            document.getElementById('company-link').textContent = job.company_name;
+            document.getElementById('job-description').textContent = job.description;
+            document.getElementById('job-location').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${job.location}`;
+            document.getElementById('job-salary').innerHTML = `<i class="fas fa-dollar-sign"></i> ${job.salary}`;
+            document.getElementById('job-posted').innerHTML = `<i class="fas fa-calendar"></i> ${formatDate(job.created_at)}`;
+        }
+        
+        // Initialize first job
+        if (jobs.length > 0) {
+            updateJobCard();
+        }
     </script>
     <script src="../JS/theme.js"></script>
 </body>

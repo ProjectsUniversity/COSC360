@@ -2,132 +2,85 @@
 session_start();
 require_once('config.php');
 
-// Check if employer is logged in
-if (!isset($_SESSION['employer_id'])) {
-    header('Location: login.php');
+$isOwner = false;
+$employer_id = isset($_GET['employer_id']) ? $_GET['employer_id'] : 
+               (isset($_SESSION['employer_id']) ? $_SESSION['employer_id'] : null);
+
+if (!$employer_id) {
+    header('Location: homepage.php');
     exit();
 }
 
 try {
     // Fetch employer details
-    $stmt = $pdo->prepare("SELECT * FROM employers WHERE employer_id = ?");
-    $stmt->execute([$_SESSION['employer_id']]);
+    $stmt = $pdo->prepare("
+        SELECT e.*, 
+               COUNT(DISTINCT j.job_id) as total_jobs,
+               COUNT(DISTINCT a.application_id) as total_applications
+        FROM employers e
+        LEFT JOIN jobs j ON e.employer_id = j.employer_id AND j.status = 'active'
+        LEFT JOIN applications a ON j.job_id = a.job_id
+        WHERE e.employer_id = ?
+        GROUP BY e.employer_id
+    ");
+    $stmt->execute([$employer_id]);
     $employer = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Fetch active job listings
-    $stmt = $pdo->prepare("SELECT * FROM jobs WHERE employer_id = ? ORDER BY created_at DESC");
-    $stmt->execute([$_SESSION['employer_id']]);
+    if (!$employer) {
+        $_SESSION['error'] = "Company not found";
+        header('Location: homepage.php');
+        exit();
+    }
+
+    // Check if logged-in employer is viewing their own dashboard
+    if (isset($_SESSION['employer_id']) && $_SESSION['employer_id'] == $employer_id) {
+        $isOwner = true;
+    }
+
+    // Fetch active job listings with application counts
+    $stmt = $pdo->prepare("
+        SELECT j.*, 
+               COUNT(DISTINCT a.application_id) as application_count,
+               GROUP_CONCAT(DISTINCT a.status) as application_statuses
+        FROM jobs j
+        LEFT JOIN applications a ON j.job_id = a.job_id
+        WHERE j.employer_id = ? AND j.status = 'active'
+        GROUP BY j.job_id
+        ORDER BY j.created_at DESC
+    ");
+    $stmt->execute([$employer_id]);
     $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($isOwner) {
+        // Fetch recent applications for owner view
+        $stmt = $pdo->prepare("
+            SELECT a.*, j.title as job_title, u.full_name, u.email
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.job_id
+            JOIN users u ON a.user_id = u.user_id
+            WHERE j.employer_id = ?
+            ORDER BY a.applied_at DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$employer_id]);
+        $recent_applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 } catch (PDOException $e) {
-    die("Error: " . $e->getMessage());
+    error_log("Database Error: " . $e->getMessage());
+    $_SESSION['error'] = "An error occurred while loading the company profile";
+    header('Location: homepage.php');
+    exit();
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Dashboard - JobSwipe</title>
-    <link rel="stylesheet" href="/HTML, CSS, JS/CSS/company-dashboard.css">
-    <script src="/HTML, CSS, JS/JS/company-dashboard.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
-    <div class="sidebar">
-        <h2>JobSwipe</h2>
-        <a href="homepage.php"><i class="fas fa-home"></i> Home</a>
-        <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="#" class="active"><i class="fas fa-building"></i> Company</a>
-        <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
-        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
 
-    <div class="main-content">
-        <div class="container">
-            <div class="section">
-                <div class="profile-header">
-                    <img src="<?php echo htmlspecialchars($employer['logo_path'] ?? 'tech-corp-logo.png'); ?>" alt="Company Logo" class="profile-picture">
-                    <div class="profile-info">
-                        <h1><?php echo htmlspecialchars($employer['company_name']); ?></h1>
-                        <p><?php echo htmlspecialchars($employer['description'] ?? 'Technology Solutions Provider'); ?></p>
-                        <div class="company-info">
-                            <p><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($employer['location']); ?></p>
-                            <p><i class="fas fa-globe"></i> <?php echo htmlspecialchars($employer['website'] ?? 'www.company.com'); ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>Active Job Openings</h2>
-                <div class="filters">
-                    <button class="filter-button" data-type="filter">
-                        <i class="fas fa-filter"></i> Filter
-                    </button>
-                    <button class="filter-button" data-type="sort">
-                        <i class="fas fa-sort"></i> Sort
-                    </button>
-                    <button class="filter-button">
-                        <i class="fas fa-calendar"></i> Date Posted
-                    </button>
-                    <button class="filter-button">
-                        <i class="fas fa-user-clock"></i> Status
-                    </button>
-                </div>
-                <div class="jobs-list">
-                    <?php foreach ($jobs as $job): ?>
-                        <div class="job-card">
-                            <div class="job-info">
-                                <h3><?php echo htmlspecialchars($job['title']); ?></h3>
-                                <div class="job-details">
-                                    <span><i class="fas fa-clock"></i> Full-time</span> •
-                                    <span><i class="fas fa-dollar-sign"></i> <?php echo htmlspecialchars($job['salary']); ?></span> •
-                                    <span><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($job['location']); ?></span>
-                                </div>
-                                <p>Posted <?php echo timeAgo($job['created_at']); ?> • <span class="job-status">Active</span></p>
-                            </div>
-                            <div class="job-actions">
-                                <button class="apply-button" onclick="window.location.href='apply.php?job=<?php echo urlencode($job['title']); ?>&job_id=<?php echo $job['job_id']; ?>'">
-                                    Apply Now
-                                </button>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div id="editModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="modal-title">Filter Jobs</h2>
-                    <form id="filterForm" onsubmit="return handleFilter(event)">
-                        <div class="form-group">
-                            <label for="jobType">Job Type</label>
-                            <select id="jobType" name="jobType">
-                                <option value="">All Types</option>
-                                <option value="full-time">Full-time</option>
-                                <option value="part-time">Part-time</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" id="location" name="location">
-                        </div>
-                        <button type="submit" class="apply-button">Apply Filters</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-<?php
 function timeAgo($datetime) {
     $timestamp = strtotime($datetime);
     $diff = time() - $timestamp;
     
-    if ($diff < 86400) {
-        return "today";
+    if ($diff < 3600) {
+        return floor($diff / 60) . " minutes ago";
+    } elseif ($diff < 86400) {
+        return floor($diff / 3600) . " hours ago";
     } elseif ($diff < 172800) {
         return "1 day ago";
     } else {
@@ -135,3 +88,159 @@ function timeAgo($datetime) {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($employer['company_name']); ?> - JobSwipe</title>
+    <link rel="stylesheet" href="../CSS/company-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../JS/theme.js" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>JobSwipe</h2>
+        <a href="homepage.php"><i class="fas fa-home"></i> <span>Back to Jobs</span></a>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="userprofile.php"><i class="fas fa-user"></i> <span>Your Profile</span></a>
+            <a href="saved-jobs.php"><i class="fas fa-bookmark"></i> <span>Saved Jobs</span></a>
+        <?php endif; ?>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i> <span>Dark Mode</span>
+        </button>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <?php if (isset($_SESSION['message'])): ?>
+                <div class="success-message">
+                    <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="company-profile section">
+                <div class="profile-header">
+                    <img src="<?php echo htmlspecialchars($employer['logo_url'] ?? '../assets/default-company-logo.png'); ?>" 
+                         alt="<?php echo htmlspecialchars($employer['company_name']); ?>" 
+                         class="company-logo">
+                    <div class="profile-info">
+                        <h1><?php echo htmlspecialchars($employer['company_name']); ?></h1>
+                        <div class="company-stats">
+                            <span><i class="fas fa-briefcase"></i> <?php echo $employer['total_jobs']; ?> Active Jobs</span>
+                            <?php if ($isOwner): ?>
+                                <span><i class="fas fa-users"></i> <?php echo $employer['total_applications']; ?> Total Applications</span>
+                            <?php endif; ?>
+                        </div>
+                        <p class="company-description">
+                            <?php echo nl2br(htmlspecialchars($employer['description'] ?? 'No company description available.')); ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Open Positions</h2>
+                    <?php if ($isOwner): ?>
+                        <a href="addJobs.php" class="add-job-button">
+                            <i class="fas fa-plus"></i> Post New Job
+                        </a>
+                    <?php endif; ?>
+                </div>
+
+                <div class="jobs-grid">
+                    <?php if (count($jobs) > 0): ?>
+                        <?php foreach ($jobs as $job): ?>
+                            <div class="job-card">
+                                <div class="job-header">
+                                    <h3><?php echo htmlspecialchars($job['title']); ?></h3>
+                                    <?php if ($isOwner): ?>
+                                        <span class="application-count">
+                                            <?php echo $job['application_count']; ?> Applications
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="job-details">
+                                    <span><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($job['location']); ?></span>
+                                    <?php if ($job['salary']): ?>
+                                        <span><i class="fas fa-dollar-sign"></i> <?php echo htmlspecialchars($job['salary']); ?></span>
+                                    <?php endif; ?>
+                                    <span><i class="fas fa-clock"></i> <?php echo timeAgo($job['created_at']); ?></span>
+                                </div>
+                                <p class="job-description"><?php echo nl2br(htmlspecialchars($job['description'])); ?></p>
+                                <div class="job-actions">
+                                    <?php if (!$isOwner && isset($_SESSION['user_id'])): ?>
+                                        <a href="apply.php?job_id=<?php echo $job['job_id']; ?>" class="apply-button">
+                                            Apply Now
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if ($isOwner): ?>
+                                        <button onclick="editJob(<?php echo $job['job_id']; ?>)" class="edit-button">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button onclick="closeJob(<?php echo $job['job_id']; ?>)" class="close-button">
+                                            <i class="fas fa-times"></i> Close
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="no-jobs-message">No active job openings at the moment.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <?php if ($isOwner && !empty($recent_applications)): ?>
+            <div class="section">
+                <h2>Recent Applications</h2>
+                <div class="applications-list">
+                    <?php foreach ($recent_applications as $application): ?>
+                        <div class="application-card">
+                            <div class="application-header">
+                                <h4><?php echo htmlspecialchars($application['full_name']); ?></h4>
+                                <span class="application-date"><?php echo timeAgo($application['applied_at']); ?></span>
+                            </div>
+                            <p>Applied for: <?php echo htmlspecialchars($application['job_title']); ?></p>
+                            <div class="application-status">
+                                Status: <span class="status-<?php echo strtolower($application['status']); ?>">
+                                    <?php echo htmlspecialchars($application['status']); ?>
+                                </span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+
+        <?php if ($isOwner): ?>
+        function editJob(jobId) {
+            window.location.href = `editJob.php?job_id=${jobId}`;
+        }
+
+        function closeJob(jobId) {
+            if (confirm('Are you sure you want to close this job posting?')) {
+                fetch(`api/close-job.php?job_id=${jobId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error closing job posting');
+                        }
+                    });
+            }
+        }
+        <?php endif; ?>
+    </script>
+</body>
+</html>

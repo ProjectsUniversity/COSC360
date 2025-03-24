@@ -39,7 +39,6 @@ try {
             <a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a>
             <a href="register.php"><i class="fas fa-user-plus"></i> Register</a>
         <?php endif; ?>
-        <a href="help.php"><i class="fas fa-question-circle"></i> Help</a>
     </div>
 
     <div class="main-content">

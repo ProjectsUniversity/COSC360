@@ -94,7 +94,8 @@ body {
 .job-card h2 {
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
-  color: #1e293b;
+  color: #f0f0f0;
+
 }
 
 .job-card h4 {
@@ -127,7 +128,7 @@ body {
 }
 
 #company-name {
-  color: #64748b;
+  color: #b9c7dc;
   font-size: 2rem;
 }
 

@@ -13,7 +13,7 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $stmt = $pdo->prepare("SELECT a.*, j.title as job_title, j.location, 
-                          e.company_name, a.applied_at, a.status
+                          e.company_name, e.employer_id, a.applied_at, a.status
                           FROM applications a
                           JOIN jobs j ON a.job_id = j.job_id
                           JOIN employers e ON j.employer_id = e.employer_id
@@ -96,7 +96,11 @@ try {
                         <?php foreach ($applications as $application): ?>
                             <div class="application-item">
                                 <h3><?php echo htmlspecialchars($application['job_title']); ?> at 
-                                    <?php echo htmlspecialchars($application['company_name']); ?></h3>
+                                    <a href="company-dashboard.php?employer_id=<?php echo $application['employer_id']; ?>" 
+                                       class="company-link">
+                                        <?php echo htmlspecialchars($application['company_name']); ?>
+                                    </a>
+                                </h3>
                                 <p>Location: <?php echo htmlspecialchars($application['location']); ?></p>
                                 <p>Applied: <?php echo date('F j, Y', strtotime($application['applied_at'])); ?></p>
                                 <p>Status: <span class="status-<?php echo strtolower($application['status']); ?>">
