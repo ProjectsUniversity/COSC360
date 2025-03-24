@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mt-3 text-center">
                     <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
                     <p><a href="forgot-password.php" class="text-muted">Forgot Password?</a></p>
-                    <p><a href="index.php">Continue as guest</a></p>
+                    <p><a href="dashboard.php">Continue as guest</a></p>
                 </div>
             </form>
         </div>
