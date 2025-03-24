@@ -1,9 +1,9 @@
 <?php
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'job_board');
-define('DB_USER', 'root');        // Default XAMPP username
-define('DB_PASS', '');            // Default XAMPP password has no password
+define('DB_NAME', 'shlok10');
+define('DB_USER', 'shlok10');        // Default XAMPP username
+define('DB_PASS', 'shlok10');            // Default XAMPP password has no password
 
 // Error reporting for development (remove in production)
 error_reporting(E_ALL);
