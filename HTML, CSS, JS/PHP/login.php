@@ -3,8 +3,11 @@ session_start();
 require_once('config.php');
 
 // Check if already logged in
-if (isset($_SESSION['user_id']) || isset($_SESSION['employer_id'])) {
+if (isset($_SESSION['user_id'])) {
     header('Location: homepage.php');
+    exit();
+} else if (isset($_SESSION['employer_id'])) {
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -16,31 +19,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     try {
-        // Check both users and employers tables
-        $stmt = $pdo->prepare("SELECT user_id, password_hash, 'user' as type FROM users 
-                              WHERE email = ?
-                              UNION
-                              SELECT employer_id, password_hash, 'employer' as type 
-                              FROM employers WHERE email = ?");
-        $stmt->execute([$email, $email]);
+        // First check users table
+        $stmt = $pdo->prepare("SELECT user_id, password_hash FROM users WHERE email = ?");
+        $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password_hash'])) {
-            // Set session variables based on user type
-            if ($user['type'] === 'user') {
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['user_type'] = 'user';
-            } else {
-                $_SESSION['employer_id'] = $user['user_id'];
-                $_SESSION['user_type'] = 'employer';
-            }
-
-            // Always redirect to homepage after successful login
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_type'] = 'user';
             header('Location: homepage.php');
             exit();
-        } else {
-            $error = 'Invalid email or password';
         }
+
+        $stmt = $pdo->prepare("SELECT employer_id, password_hash FROM employers WHERE email = ?");
+        $stmt->execute([$email]);
+        $employer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($employer && password_verify($password, $employer['password_hash'])) {
+            $_SESSION['employer_id'] = $employer['employer_id'];
+            $_SESSION['user_type'] = 'employer';
+            header('Location: dashboard.php');
+            exit();
+        }
+
+        // If we get here, no valid user was found
+        $error = 'Invalid email or password';
     } catch (PDOException $e) {
         $error = 'Login failed. Please try again.';
         error_log($e->getMessage());

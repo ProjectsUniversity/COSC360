@@ -3,8 +3,11 @@ session_start();
 require_once('config.php');
 
 // Check if already logged in
-if (isset($_SESSION['user_id']) || isset($_SESSION['employer_id'])) {
+if (isset($_SESSION['user_id'])) {
     header('Location: homepage.php');
+    exit();
+} else if (isset($_SESSION['employer_id'])) {
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -51,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['employer_id'] = $pdo->lastInsertId();
             $_SESSION['user_type'] = 'employer';
             
-            header('Location: company-dashboard.php');
+            header('Location: dashboard.php');
             exit();
         }
     } catch (Exception $e) {
