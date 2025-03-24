@@ -7,6 +7,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Define upload directory path correctly
+define('UPLOAD_DIR', dirname(dirname(dirname(__FILE__))) . '/Uploads/resumes/');
+
 try {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
     $stmt->execute([$_SESSION['user_id']]);
@@ -34,12 +37,60 @@ try {
                     ]);
                     $_SESSION['message'] = "Profile updated successfully!";
                     break;
+                    
+                case 'update_resume':
+                    if (isset($_FILES['resume']) && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
+                        $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                        $maxSize = 5 * 1024 * 1024; // 5MB
+                        
+                        if (!in_array($_FILES['resume']['type'], $allowedTypes)) {
+                            $_SESSION['error'] = "Invalid file type. Please upload a PDF or Word document.";
+                            break;
+                        }
+                        
+                        if ($_FILES['resume']['size'] > $maxSize) {
+                            $_SESSION['error'] = "File is too large. Maximum size is 5MB.";
+                            break;
+                        }
+                        
+                        // Create uploads directory if it doesn't exist
+                        if (!file_exists(UPLOAD_DIR)) {
+                            if (!mkdir(UPLOAD_DIR, 0777, true)) {
+                                $_SESSION['error'] = "Failed to create upload directory.";
+                                break;
+                            }
+                        }
+                        
+                        // Generate unique filename
+                        $extension = pathinfo($_FILES['resume']['name'], PATHINFO_EXTENSION);
+                        $filename = uniqid('resume_') . '.' . $extension;
+                        $filepath = UPLOAD_DIR . $filename;
+                        
+                        // Delete old resume if exists
+                        if (!empty($user['resume_path'])) {
+                            $oldFile = UPLOAD_DIR . basename($user['resume_path']);
+                            if (file_exists($oldFile)) {
+                                unlink($oldFile);
+                            }
+                        }
+                        
+                        if (move_uploaded_file($_FILES['resume']['tmp_name'], $filepath)) {
+                            $stmt = $pdo->prepare("UPDATE users SET resume_path = ? WHERE user_id = ?");
+                            $stmt->execute([$filename, $_SESSION['user_id']]);
+                            $_SESSION['message'] = "Resume updated successfully!";
+                        } else {
+                            error_log("Upload failed. Error: " . error_get_last()['message']);
+                            $_SESSION['error'] = "Failed to upload resume. Please try again.";
+                        }
+                    }
+                    break;
             }
             header('Location: userprofile.php');
             exit();
         }
     }
 } catch (PDOException $e) {
+    error_log("Database Error: " . $e->getMessage());
     die("Error: " . $e->getMessage());
 }
 ?>
@@ -90,6 +141,23 @@ try {
             </div>
 
             <div class="section">
+                <h2>Resume</h2>
+                <div class="resume-section">
+                    <?php if ($user['resume_path']): ?>
+                        <div class="resume-info">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Current Resume: <?php echo htmlspecialchars(basename($user['resume_path'])); ?></span>
+                        </div>
+                    <?php else: ?>
+                        <p>No resume uploaded yet</p>
+                    <?php endif; ?>
+                    <button class="edit-button" onclick="openEditModal('resume')">
+                        <?php echo $user['resume_path'] ? 'Update Resume' : 'Upload Resume'; ?>
+                    </button>
+                </div>
+            </div>
+
+            <div class="section">
                 <h2>Job Applications</h2>
                 <div class="applications-list">
                     <?php if (count($applications) > 0): ?>
@@ -119,7 +187,7 @@ try {
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Edit Profile</h2>
-            <form action="userprofile.php" method="POST">
+            <form action="userprofile.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="update_profile">
                 <div class="form-group">
                     <label for="full_name">Full Name</label>
@@ -132,6 +200,14 @@ try {
                            value="<?php echo htmlspecialchars($user['location']); ?>">
                 </div>
                 <button type="submit" class="edit-button">Save Changes</button>
+            </form>
+            <form action="userprofile.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="update_resume">
+                <div class="form-group">
+                    <label for="resume">Upload Resume</label>
+                    <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx">
+                </div>
+                <button type="submit" class="edit-button">Upload Resume</button>
             </form>
         </div>
     </div>
