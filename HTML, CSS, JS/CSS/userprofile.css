@@ -351,6 +351,52 @@ body {
     color: var(--text-color);
 }
 
+.resume-section {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.resume-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.resume-info i {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+.resume-section button {
+    margin-top: 1rem;
+}
+
+/* File input styling */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+}
+
+.file-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 70px;
