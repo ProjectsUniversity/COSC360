@@ -1,4 +1,3 @@
-/* Dashboard Styles */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -58,17 +57,14 @@ body {
     min-height: auto;
 }
 
-/* Reset all hover effects first */
 .sidebar a:hover {
     background-color: transparent;
 }
 
-/* Only apply hover effect to main navigation items in nav-pills */
 .sidebar .nav-pills a:hover {
     background-color: #ebebeb;
 }
 
-/* Remove dropdown hover effects */
 .sidebar .dropdown-toggle:hover,
 .sidebar .dropdown:hover,
 .sidebar-brand a:hover {
@@ -81,7 +77,6 @@ body {
     padding-bottom: 10px;
 }
 
-/* Make sure the dropdown components have proper width */
 .sidebar .dropdown a {
     display: flex;
     width: 100%;
@@ -334,7 +329,6 @@ body {
     border-color: #28a745;
 }
 
-/* Responsive Design */
 @media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
@@ -403,7 +397,6 @@ body {
     }
 }
 
-/* Additional responsive fixes */
 @media (max-width: 400px) {
     .job-stats, .job-details {
         font-size: 0.8rem;

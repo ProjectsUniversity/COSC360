@@ -3,15 +3,14 @@ session_start();
 require_once('config.php');
 
 try {
-    // Fetch all active jobs with company details
+
     $stmt = $pdo->prepare("SELECT j.*, e.company_name, e.logo_path 
                           FROM jobs j 
                           JOIN employers e ON j.employer_id = e.employer_id 
                           ORDER BY j.created_at DESC");
     $stmt->execute();
     $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Convert jobs to JSON for JavaScript usage
+
     $jobsJson = json_encode($jobs);
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
@@ -70,7 +69,6 @@ try {
     </div>
 
     <script>
-        // Pass PHP jobs data to JavaScript
         const jobs = <?php echo $jobsJson; ?>;
         let currentJobIndex = 0;
 
@@ -112,7 +110,6 @@ try {
             <?php endif; ?>
         }
 
-        // Initialize with first job
         displayJob(currentJobIndex);
     </script>
 </body>

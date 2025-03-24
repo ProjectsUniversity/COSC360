@@ -293,7 +293,6 @@ body {
     font-size: 0.9em;
 }
 
-/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -374,7 +373,6 @@ body {
     margin-top: 1rem;
 }
 
-/* File input styling */
 input[type="file"] {
     display: block;
     width: 100%;

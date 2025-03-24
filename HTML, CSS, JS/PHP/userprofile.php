@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Define upload directory path correctly
 define('UPLOAD_DIR', dirname(dirname(dirname(__FILE__))) . '/Uploads/resumes/');
 
 try {

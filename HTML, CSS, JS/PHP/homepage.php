@@ -3,7 +3,7 @@ session_start();
 require_once('config.php');
 
 try {
-    // Update the SQL query to remove logo references
+
     $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
                           e.company_name, e.employer_id
                           FROM jobs j 
@@ -114,7 +114,7 @@ try {
             document.getElementById('job-posted').innerHTML = `<i class="fas fa-calendar"></i> ${formatDate(job.created_at)}`;
         }
         
-        // Initialize first job
+
         if (jobs.length > 0) {
             updateJobCard();
         }

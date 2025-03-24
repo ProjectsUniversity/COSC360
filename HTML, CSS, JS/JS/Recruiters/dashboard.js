@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Add hamburger menu for mobile
     const mainContent = document.querySelector('.main-content');
     if (!document.querySelector('.navbar-toggler')) {
         const toggleButton = document.createElement('button');
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         mainContent.insertBefore(toggleButton, mainContent.firstChild);
 
-        // Show toggle button on mobile
         const mediaQuery = window.matchMedia('(max-width: 992px)');
         function handleMobileChange(e) {
             toggleButton.style.display = e.matches ? 'block' : 'none';
@@ -26,13 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
         mediaQuery.addListener(handleMobileChange);
         handleMobileChange(mediaQuery);
 
-        // Toggle sidebar
         const sidebar = document.querySelector('.sidebar');
         toggleButton.addEventListener('click', function() {
             sidebar.classList.toggle('show');
         });
 
-        // Close sidebar when clicking outside
         document.addEventListener('click', function(e) {
             if (sidebar.classList.contains('show') && 
                 !sidebar.contains(e.target) && 

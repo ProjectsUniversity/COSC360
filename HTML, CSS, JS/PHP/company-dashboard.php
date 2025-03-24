@@ -12,7 +12,6 @@ if (!$employer_id) {
 }
 
 try {
-    // Fetch employer details
     $stmt = $pdo->prepare("
         SELECT e.*, 
                COUNT(DISTINCT j.job_id) as total_jobs,
@@ -32,12 +31,10 @@ try {
         exit();
     }
 
-    // Check if logged-in employer is viewing their own dashboard
     if (isset($_SESSION['employer_id']) && $_SESSION['employer_id'] == $employer_id) {
         $isOwner = true;
     }
 
-    // Fetch active job listings with application counts
     $stmt = $pdo->prepare("
         SELECT j.*, 
                COUNT(DISTINCT a.application_id) as application_count,
@@ -52,7 +49,6 @@ try {
     $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ($isOwner) {
-        // Fetch recent applications for owner view
         $stmt = $pdo->prepare("
             SELECT a.*, j.title as job_title, u.full_name, u.email
             FROM applications a

@@ -2,7 +2,7 @@
 session_start();
 require_once('config.php');
 
-// Check if already logged in
+
 if (isset($_SESSION['user_id'])) {
     header('Location: homepage.php');
     exit();

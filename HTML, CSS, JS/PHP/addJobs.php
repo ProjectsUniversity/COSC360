@@ -2,7 +2,6 @@
 session_start();
 require_once 'config.php';
 
-// Check if employer is logged in
 if (!isset($_SESSION['employer_id'])) {
     header("Location: recLogin.php");
     exit();
@@ -11,13 +10,11 @@ if (!isset($_SESSION['employer_id'])) {
 $errors = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Modern input sanitization and validation
     $title = isset($_POST['title']) ? trim(htmlspecialchars($_POST['title'])) : '';
     $description = isset($_POST['description']) ? trim(htmlspecialchars($_POST['description'])) : '';
     $location = isset($_POST['location']) ? trim(htmlspecialchars($_POST['location'])) : '';
     $salary = isset($_POST['salary']) ? filter_var($_POST['salary'], FILTER_VALIDATE_FLOAT) : null;
 
-    // Validation
     if (empty($title)) {
         $errors[] = "Job title is required";
     } elseif (strlen($title) > 255) {
@@ -40,10 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Salary must be greater than zero";
     }
 
-    // If no errors, proceed with database insertion
     if (empty($errors)) {
         try {
-            // Match exactly with the database schema
             $sql = "INSERT INTO jobs (employer_id, title, description, location, salary, status, created_at) 
                     VALUES (:employer_id, :title, :description, :location, :salary, :status, NOW())";
             $stmt = $pdo->prepare($sql);
@@ -83,7 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="d-flex">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary">
                 <div class="sidebar-brand mb-3">
@@ -118,7 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content p-4">
             <div class="container">
                 <div class="row justify-content-center">

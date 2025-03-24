@@ -2,16 +2,13 @@
 session_start();
 require_once('config.php');
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-// Get job and company details
 if (isset($_GET['job_id'])) {
     try {
-        // Get job details with company information
         $stmt = $pdo->prepare("
             SELECT j.*, e.company_name, e.location, e.employer_id
             FROM jobs j
@@ -27,7 +24,6 @@ if (isset($_GET['job_id'])) {
             exit();
         }
 
-        // Check if user has already applied
         $stmt = $pdo->prepare("
             SELECT application_id, status 
             FROM applications 
@@ -42,7 +38,6 @@ if (isset($_GET['job_id'])) {
             exit();
         }
         
-        // Get user details
         $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -58,7 +53,6 @@ if (isset($_GET['job_id'])) {
     exit();
 }
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Validate input
@@ -66,10 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('Please provide a cover letter');
         }
 
-        // Begin transaction
         $pdo->beginTransaction();
 
-        // Insert application
         $stmt = $pdo->prepare("
             INSERT INTO applications (job_id, user_id, cover_letter, status, applied_at)
             VALUES (?, ?, ?, 'Pending', CURRENT_TIMESTAMP)
@@ -80,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['cover-letter']
         ]);
 
-        // Commit transaction
         $pdo->commit();
 
         $_SESSION['success'] = "Application submitted successfully!";
@@ -88,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
 
     } catch (Exception $e) {
-        // Rollback transaction if there was an error
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
@@ -151,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Set initial theme
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
