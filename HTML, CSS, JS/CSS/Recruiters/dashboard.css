@@ -1,31 +1,70 @@
-/* Dashboard Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    overflow-x: hidden;
+    min-height: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #f5f5f5;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.d-flex {
+    display: flex;
+    min-height: 10vh;
+    position: relative;
+}
 
 .main-content {
-    margin-left: 15%;
+    flex: 1;
     padding: 20px;
-    width: 85%;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar {
     position: fixed;
     width: 250px;
+    height: 100vh;
     background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-/* Reset all hover effects first */
+.sidebar .d-flex {
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    padding: 0;
+    min-height: auto;
+}
+
 .sidebar a:hover {
     background-color: transparent;
 }
 
-/* Only apply hover effect to main navigation items in nav-pills */
 .sidebar .nav-pills a:hover {
     background-color: #ebebeb;
 }
 
-/* Remove dropdown hover effects */
 .sidebar .dropdown-toggle:hover,
 .sidebar .dropdown:hover,
 .sidebar-brand a:hover {
@@ -34,89 +73,342 @@
 
 .sidebar .dropdown {
     width: 100%;
+    margin-top: auto;
+    padding-bottom: 10px;
 }
 
-/* Make sure the dropdown components have proper width */
 .sidebar .dropdown a {
     display: flex;
     width: 100%;
     align-items: center;
-    justify-content: center;
-}
-
-/* Remove shadow from the Job Swipe text */
-.sidebar-brand h3 {
-    text-shadow: none;
-}
-
-.dashboard-header {
-    padding-top: 10px;
-}
-
-.btn-with-plus::before {
-    content: "+";
-    margin-right: 8px;
-    font-weight: bold;
+    padding: 8px 16px;
 }
 
 .sidebar-brand {
     width: 100%;
     text-align: center;
-    height: 3.5%;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-brand a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
+}
+
+.sidebar-brand span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.nav-pills .nav-link {
+    border-radius: 0;
+    color: #495057;
+    padding: 10px 15px;
+    margin: 2px 0;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0275d8;
+    color: white;
+}
+
+.nav-pills .nav-link i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.company-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+}
+
+.company-logo-small {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+
+.dashboard-header {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .widgets-col {
-    background-color: #ebebeb;
-    border-radius: 10px;
-    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
     text-align: center;
     height: 100%;
+    margin-bottom: 1.5rem;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.widgets-col:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .widgets-col h3 {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 .widgets-col p {
     margin-bottom: 0;
-    color: #434343;
-} 
+    color: #6c757d;
+    font-size: 1rem;
+}
 
-#mainJobs > h3 {
-    margin: 0.7em 0;
+.widgets-col i {
+    margin-right: 8px;
+}
+
+#mainJobs {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    padding: 0;
+    border-radius: 8px;
 }
 
 .card {
-    margin-top: 1em;
-    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
-    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
 }
 
 .card:hover {
-    box-shadow: 0px 0px 22px rgba(184,184,184,1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    color: #495057;
+    padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+.job-card {
+    transition: transform 0.2s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-3px);
 }
 
 .job-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.badge {
-    margin-right: 0.5rem;
-}
-
-.job-stat {
-    display: inline-block;
-    margin-right: 1rem;
+.job-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
     color: #6c757d;
     font-size: 0.9rem;
 }
 
-.job-stat i {
-    margin-right: 0.25rem;
+.job-details i {
+    margin-right: 5px;
 }
 
-.sidebar .d-flex {
-    height: 100vh;
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+}
+
+.btn-primary, .btn-success {
+    color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-outline-primary {
+    color: #0275d8;
+    border-color: #0275d8;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dashboard-header .btn {
+        margin-top: 1rem;
+        align-self: flex-start;
+    }
+    
+    .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .job-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .job-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .job-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .widgets-col {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .job-stats, .job-details {
+        font-size: 0.8rem;
+    }
+}
+
+.navbar-toggler {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .navbar-toggler {
+        display: block;
+    }
 }

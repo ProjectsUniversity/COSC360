@@ -30,7 +30,7 @@ const validationRules = {
     },
     resume: {
         maxSize: 5242880, // 5MB
-        allowedTypes: ['.pdf', '.doc', '.docx']
+        allowedTypes: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
     }
 };
 
@@ -76,6 +76,21 @@ function generateModalContent(section) {
                 <div id="current-skills">
                     ${document.getElementById('skills-list').innerHTML}
                 </div>
+            `;
+        case 'resume':
+            return `
+                <span class="close">&times;</span>
+                <h2>Update Resume</h2>
+                <form action="userprofile.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="update_resume">
+                    <div class="form-group">
+                        <label for="resume">Choose Resume (PDF, DOC, DOCX, max 5MB)</label>
+                        <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
+                        <div class="file-info"></div>
+                        <span class="error-message" id="resume-error"></span>
+                    </div>
+                    <button type="submit" class="edit-button">Upload New Resume</button>
+                </form>
             `;
     }
 }
@@ -167,6 +182,50 @@ function updateContent(section) {
                 reader.readAsDataURL(imageFile);
             }
             break;
+    }
+}
+
+function handleResumeUpload() {
+    const resumeInput = document.getElementById('resume');
+    const fileInfo = document.querySelector('.file-info');
+    const errorSpan = document.getElementById('resume-error');
+    
+    if (resumeInput) {
+        resumeInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            errorSpan.textContent = '';
+            
+            if (file) {
+                // Validate file type
+                const fileType = file.type;
+                if (!validationRules.resume.allowedTypes.includes(fileType)) {
+                    errorSpan.textContent = 'Please upload a PDF or Word document';
+                    resumeInput.value = '';
+                    fileInfo.textContent = '';
+                    return;
+                }
+                
+                // Validate file size
+                if (file.size > validationRules.resume.maxSize) {
+                    errorSpan.textContent = 'File size must be less than 5MB';
+                    resumeInput.value = '';
+                    fileInfo.textContent = '';
+                    return;
+                }
+                
+                // Show file info
+                fileInfo.textContent = `Selected file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+            } else {
+                fileInfo.textContent = '';
+            }
+        });
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('editModal');
+    if (modal) {
+        modal.style.display = 'none';
     }
 }
 

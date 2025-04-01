@@ -1,53 +1,57 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const loginForm = document.getElementById("loginForm");
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
     
-    function validateLoginForm(event) {
-        event.preventDefault();
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        
-        clearErrorMessages();
-        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
         let isValid = true;
         
-        if (!email) {
-            displayError("email", "Email address or Username is required");
+        if (!email || !validateEmail(email)) {
+            showError('email', 'Please enter a valid email address');
             isValid = false;
+        } else {
+            removeError('email');
         }
         
-        if (!password) {
-            displayError("password", "Password is required");
+        if (!password || password.length < 8) {
+            showError('password', 'Password must be at least 8 characters long');
             isValid = false;
+        } else {
+            removeError('password');
         }
         
         if (isValid) {
-            alert("Login successful!");
-            // loginForm.submit();
+            form.submit();
         }
-        
-        return false; 
-    }
-    
-    if (loginForm) {
-        loginForm.addEventListener("submit", validateLoginForm);
-    }
-    
-    function displayError(fieldId, message) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.createElement("div");
-        
-        errorDiv.className = "invalid-feedback";
-        errorDiv.textContent = message;
-        errorDiv.style.display = "block";
-        
-        field.classList.add("is-invalid");
-        
-        field.parentNode.insertBefore(errorDiv, field.nextSibling);
-    }
-    
-    function clearErrorMessages() {
-        document.querySelectorAll(".invalid-feedback").forEach(el => el.remove());
-        document.querySelectorAll(".is-invalid").forEach(el => el.classList.remove("is-invalid"));
-    }
-}); 
+    });
+});
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function showError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const errorDiv = document.getElementById(fieldId + 'Error') || createErrorDiv(fieldId);
+    errorDiv.textContent = message;
+    field.classList.add('error');
+}
+
+function removeError(fieldId) {
+    const field = document.getElementById(fieldId);
+    const errorDiv = document.getElementById(fieldId + 'Error');
+    if (errorDiv) errorDiv.remove();
+    field.classList.remove('error');
+}
+
+function createErrorDiv(fieldId) {
+    const field = document.getElementById(fieldId);
+    const errorDiv = document.createElement('div');
+    errorDiv.id = fieldId + 'Error';
+    errorDiv.className = 'error-message';
+    field.parentNode.insertBefore(errorDiv, field.nextSibling);
+    return errorDiv;
+}
