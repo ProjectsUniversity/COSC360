@@ -3,7 +3,6 @@ require_once '../config.php';
 require_once 'auth.php';
 requireAdmin();
 
-// Handle job actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $job_id = $_POST['job_id'] ?? '';
@@ -309,7 +308,6 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                     detailsDiv.innerHTML = `
                         <div class="row">
                             <div class="col-md-6">
-                                <h6>Job Information</h6>
                                 <p><strong>Title:</strong> ${data.title}</p>
                                 <p><strong>Company:</strong> ${data.company_name}</p>
                                 <p><strong>Location:</strong> ${data.location}</p>
@@ -318,7 +316,6 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                                 <p><strong>Posted:</strong> ${new Date(data.created_at).toLocaleDateString()}</p>
                             </div>
                             <div class="col-md-6">
-                                <h6>Statistics</h6>
                                 <p><strong>Total Applications:</strong> ${data.application_count}</p>
                                 <p><strong>Application Status Breakdown:</strong></p>
                                 <ul class="list-unstyled">
@@ -329,11 +326,6 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                             </div>
                         </div>
                         <div class="mt-4">
-                            <h6>Job Description</h6>
-                            <p>${data.description}</p>
-                        </div>
-                        <div class="mt-4">
-                            <h6>Recent Applications</h6>
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <thead>
