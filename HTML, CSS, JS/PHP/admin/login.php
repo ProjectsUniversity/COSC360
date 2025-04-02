@@ -42,18 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             background-color: #f8f9fa;
-        height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .login-container {
+            margin: 20%;
             background: white;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
         }
     </style>
 </head>
