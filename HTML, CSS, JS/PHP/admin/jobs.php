@@ -110,20 +110,18 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
         .badge { font-size: 0.85em; }
         
         /* Table column widths */
-        .col-id { width: 5%; }
+        .col-id { width: 3%; }
         .col-title { width: 25%; }
         .col-company { width: 19%; }
         .col-location { width: 15%; }
         .col-salary { width: 15%; }
-        .col-apps { width: 11%; }
+        .col-apps { width: 4%; }
         .col-status { width: 10%; }
-        .col-date { width: 15%; }
+        .col-date { width: 25%; }
         .col-actions { width: 15%; }
         
-        /* Ensure table takes full width */
         .table-responsive table {
             width: 100%;
-            table-layout: fixed;
         }
     </style>
 </head>
@@ -222,7 +220,7 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                                 <p class="text-muted">No jobs found matching your criteria.</p>
                             </div>
                         <?php else: ?>
-                            <div class="table-responsive">
+                            <div class="table-responsive text-center">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>

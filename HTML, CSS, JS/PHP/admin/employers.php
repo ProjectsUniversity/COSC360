@@ -92,19 +92,17 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         /* Table column widths */
         .col-id { width: 5%; }
-        .col-company { width: 15%; }
-        .col-email { width: 18%; }
-        .col-location { width: 12%; }
+        .col-company { width: 16%; }
+        .col-email { width: 19%; }
+        .col-location { width: 14%; }
         .col-jobs { width: 8%; }
-        .col-active { width: 8%; }
+        .col-active { width: 9%; }
         .col-apps { width: 10%; }
         .col-status { width: 8%; }
         .col-actions { width: 16%; }
         
-        /* Ensure table takes full width */
         .table-responsive table {
             width: 100%;
-            table-layout: fixed;
         }
     </style>
 </head>
@@ -187,7 +185,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Employers Table -->
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive text-center">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -219,7 +217,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-info" 
+                                                <button type="button" class="btn btn-sm btn-info me-2" 
                                                         onclick="viewDetails(<?php echo $employer['employer_id']; ?>)">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
@@ -227,7 +225,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                       onsubmit="return confirm('Are you sure you want to toggle this employer\'s status?');">
                                                     <input type="hidden" name="action" value="toggle_status">
                                                     <input type="hidden" name="employer_id" value="<?php echo $employer['employer_id']; ?>">
-                                                    <button type="submit" class="btn btn-sm btn-warning">
+                                                    <button type="submit" class="btn btn-sm btn-warning me-2">
                                                         <i class="bi bi-toggle-on"></i>
                                                     </button>
                                                 </form>

@@ -94,11 +94,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .col-apps { width: 10%; }
         .col-status { width: 10%; }
         .col-actions { width: 15%; }
-        
-        /* Ensure table takes full width */
+
         .table-responsive table {
             width: 100%;
-            table-layout: fixed;
         }
     </style>
 </head>
@@ -182,8 +180,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover ">
-                                <thead>
+                            <table class="table table-hover text-center">
+                                <thead">
                                     <tr>
                                         <th class="col-id">ID</th>
                                         <th class="col-name">Name</th>
@@ -209,7 +207,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-info" 
+                                                <button type="button" class="btn btn-sm btn-info me-2" 
                                                         onclick="viewDetails(<?php echo $user['user_id']; ?>)">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
@@ -217,7 +215,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                       onsubmit="return confirm('Are you sure you want to toggle this user\'s status?');">
                                                     <input type="hidden" name="action" value="toggle_status">
                                                     <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
-                                                    <button type="submit" class="btn btn-sm btn-warning">
+                                                    <button type="submit" class="btn btn-sm btn-warning me-2">
                                                         <i class="bi bi-toggle-on"></i>
                                                     </button>
                                                 </form>
