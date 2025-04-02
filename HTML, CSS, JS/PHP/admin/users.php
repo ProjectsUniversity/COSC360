@@ -71,9 +71,14 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         .sidebar {
-            min-height: 100vh;
+            height: 100vh;
             background: #343a40;
             color: white;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            width: 16%;
+            z-index: 1000;
         }
         .sidebar .nav-link {
             color: rgba(255,255,255,.75);
@@ -84,6 +89,26 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .sidebar .nav-link.active {
             color: white;
             background: rgba(255,255,255,.1);
+        }
+        
+        .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .sidebar .logout-item {
+            margin-top: auto;
+        }
+        
+        .main-content {
+            margin-left: 16.666667%; /* For col-md-2 */
+        }
+        
+        @media (max-width: 767.98px) {
+            .main-content {
+                margin-left: 0;
+            }
         }
         
         /* Table column widths */
@@ -130,16 +155,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="analytics.php">
-                            <i class="bi bi-graph-up"></i> Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="audit-logs.php">
                             <i class="bi bi-journal-text"></i> Audit Logs
                         </a>
                     </li>
-                    <li class="nav-item mt-3">
+                    <li class="nav-item logout-item">
                         <a class="nav-link" href="logout.php">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
@@ -148,7 +168,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 p-4">
+            <div class="col-md-9 col-lg-10 p-4 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>User Management</h2>
                 </div>

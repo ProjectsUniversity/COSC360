@@ -101,10 +101,40 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .sidebar { min-height: 100vh; background: #343a40; color: white; }
+        .sidebar { 
+            height: 100vh; 
+            background: #343a40; 
+            color: white; 
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            width: 16%;
+            z-index: 1000;
+        }
         .sidebar .nav-link { color: rgba(255,255,255,.75); }
         .sidebar .nav-link:hover { color: white; }
         .sidebar .nav-link.active { color: white; background: rgba(255,255,255,.1); }
+        
+        .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .sidebar .logout-item {
+            margin-top: auto;
+        }
+        
+        .main-content {
+            margin-left: 16.666667%; /* For col-md-2 */
+        }
+        
+        @media (max-width: 767.98px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
         .job-description { max-height: 100px; overflow: hidden; text-overflow: ellipsis; }
         .actions-group { display: flex; gap: 0.25rem; }
         .badge { font-size: 0.85em; }
@@ -155,16 +185,11 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="analytics.php">
-                            <i class="bi bi-graph-up"></i> Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="audit-logs.php">
                             <i class="bi bi-journal-text"></i> Audit Logs
                         </a>
                     </li>
-                    <li class="nav-item mt-3">
+                    <li class="nav-item logout-item">
                         <a class="nav-link" href="logout.php">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
@@ -173,7 +198,7 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
             </div>
 
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 p-4">
+            <div class="col-md-9 col-lg-10 p-4 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Job Management</h2>
                 </div>

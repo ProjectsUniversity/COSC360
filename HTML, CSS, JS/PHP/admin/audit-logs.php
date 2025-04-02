@@ -71,9 +71,14 @@ $admins = $pdo->query("SELECT admin_id, username FROM admins ORDER BY username")
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         .sidebar {
-            min-height: 100vh;
+            height: 100vh;
             background: #343a40;
             color: white;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            width: 16%;
+            z-index: 1000;
         }
         .sidebar .nav-link {
             color: rgba(255,255,255,.75);
@@ -85,6 +90,27 @@ $admins = $pdo->query("SELECT admin_id, username FROM admins ORDER BY username")
             color: white;
             background: rgba(255,255,255,.1);
         }
+        
+        .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .sidebar .logout-item {
+            margin-top: auto;
+        }
+        
+        .main-content {
+            margin-left: 16.666667%; /* For col-md-2 */
+        }
+        
+        @media (max-width: 767.98px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
         .log-entry {
             transition: background-color 0.2s;
         }
@@ -123,16 +149,11 @@ $admins = $pdo->query("SELECT admin_id, username FROM admins ORDER BY username")
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="analytics.php">
-                            <i class="bi bi-graph-up"></i> Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="audit-logs.php">
                             <i class="bi bi-journal-text"></i> Audit Logs
                         </a>
                     </li>
-                    <li class="nav-item mt-3">
+                    <li class="nav-item logout-item">
                         <a class="nav-link" href="logout.php">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
@@ -141,7 +162,7 @@ $admins = $pdo->query("SELECT admin_id, username FROM admins ORDER BY username")
             </div>
 
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 p-4">
+            <div class="col-md-9 col-lg-10 p-4 main-content">
                 <h2 class="mb-4">Audit Logs</h2>
 
                 <!-- Filters -->
@@ -222,4 +243,4 @@ $admins = $pdo->query("SELECT admin_id, username FROM admins ORDER BY username")
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>
