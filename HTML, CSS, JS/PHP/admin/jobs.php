@@ -11,9 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'delete':
             if ($job_id) {
-                $stmt = $pdo->prepare("DELETE FROM jobs WHERE job_id = ?");
-                $stmt->execute([$job_id]);
-                logAdminAction('delete_job', "Deleted job ID: $job_id");
+                $pdo->beginTransaction();
+                try {
+                    // First delete associated saved jobs
+                    $stmt = $pdo->prepare("DELETE FROM saved_jobs WHERE job_id = ?");
+                    $stmt->execute([$job_id]);
+                    
+                    // Then delete associated applications
+                    $stmt = $pdo->prepare("DELETE FROM applications WHERE job_id = ?");
+                    $stmt->execute([$job_id]);
+                    
+                    // Finally delete the job
+                    $stmt = $pdo->prepare("DELETE FROM jobs WHERE job_id = ?");
+                    $stmt->execute([$job_id]);
+                    
+                    $pdo->commit();
+                    logAdminAction('delete_job', "Deleted job ID: $job_id");
+                } catch (PDOException $e) {
+                    $pdo->rollBack();
+                    throw $e;
+                }
             }
             break;
         case 'toggle_status':
@@ -348,4 +365,4 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
         }
     </script>
 </body>
-</html> 
+</html>
