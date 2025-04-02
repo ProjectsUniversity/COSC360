@@ -177,7 +177,7 @@ $application_status_data = array_map(function($row) {
 
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 p-4 main-content">
-                <h2 class="mb-4">Analytics Dashboard</h2>
+                <h2 class="mb-4">Dashboard</h2>
 
                 <!-- Key Metrics -->
                 <div class="row mb-4">
