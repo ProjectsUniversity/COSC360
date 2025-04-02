@@ -94,3 +94,12 @@ VALUES (
     'active'
 );
 
+-- Add status column to users table
+ALTER TABLE users ADD COLUMN status VARCHAR(50) DEFAULT 'active' AFTER resume_path;
+
+-- Add status column to employers table
+ALTER TABLE employers ADD COLUMN status VARCHAR(50) DEFAULT 'active' AFTER location;
+
+-- Update existing users and employers to have 'active' status by default
+UPDATE users SET status = 'active' WHERE status IS NULL;
+UPDATE employers SET status = 'active' WHERE status IS NULL;

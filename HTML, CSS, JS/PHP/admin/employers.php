@@ -214,7 +214,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo $employer['total_applications']; ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo $employer['status'] === 'active' ? 'success' : 'danger'; ?>">
-                                                <?php echo ucfirst($employer['status']); ?>
+                                                <?php echo ucfirst(htmlspecialchars($employer['status'] ?? 'unknown')); ?>
                                             </span>
                                         </td>
                                         <td>

@@ -204,7 +204,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo $user['application_count']; ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo $user['status'] === 'active' ? 'success' : 'danger'; ?>">
-                                                <?php echo ucfirst($user['status']); ?>
+                                                <?php echo ucfirst(htmlspecialchars($user['status'] ?? 'unknown')); ?>
                                             </span>
                                         </td>
                                         <td>
