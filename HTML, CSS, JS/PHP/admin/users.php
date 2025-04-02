@@ -85,6 +85,21 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: white;
             background: rgba(255,255,255,.1);
         }
+        
+        /* Table column widths */
+        .col-id { width: 5%; }
+        .col-name { width: 20%; }
+        .col-email { width: 25%; }
+        .col-date { width: 15%; }
+        .col-apps { width: 10%; }
+        .col-status { width: 10%; }
+        .col-actions { width: 15%; }
+        
+        /* Ensure table takes full width */
+        .table-responsive table {
+            width: 100%;
+            table-layout: fixed;
+        }
     </style>
 </head>
 <body>
@@ -167,16 +182,16 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover ">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Created</th>
-                                        <th>Applications</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th class="col-id">ID</th>
+                                        <th class="col-name">Name</th>
+                                        <th class="col-email">Email</th>
+                                        <th class="col-date">Created</th>
+                                        <th class="col-apps">Applications</th>
+                                        <th class="col-status">Status</th>
+                                        <th class="col-actions">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -252,4 +267,4 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
 </body>
-</html> 
+</html>

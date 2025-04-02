@@ -89,6 +89,23 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: white;
             background: rgba(255,255,255,.1);
         }
+        
+        /* Table column widths */
+        .col-id { width: 5%; }
+        .col-company { width: 15%; }
+        .col-email { width: 18%; }
+        .col-location { width: 12%; }
+        .col-jobs { width: 8%; }
+        .col-active { width: 8%; }
+        .col-apps { width: 10%; }
+        .col-status { width: 8%; }
+        .col-actions { width: 16%; }
+        
+        /* Ensure table takes full width */
+        .table-responsive table {
+            width: 100%;
+            table-layout: fixed;
+        }
     </style>
 </head>
 <body>
@@ -174,15 +191,15 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Company</th>
-                                        <th>Email</th>
-                                        <th>Location</th>
-                                        <th>Total Jobs</th>
-                                        <th>Active Jobs</th>
-                                        <th>Applications</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th class="col-id">ID</th>
+                                        <th class="col-company">Company</th>
+                                        <th class="col-email">Email</th>
+                                        <th class="col-location">Location</th>
+                                        <th class="col-jobs">Total Jobs</th>
+                                        <th class="col-active">Active Jobs</th>
+                                        <th class="col-apps">Applications</th>
+                                        <th class="col-status">Status</th>
+                                        <th class="col-actions">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -310,4 +327,4 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
 </body>
-</html> 
+</html>
