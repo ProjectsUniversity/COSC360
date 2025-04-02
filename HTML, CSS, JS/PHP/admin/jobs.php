@@ -306,32 +306,13 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                 .then(response => response.json())
                 .then(data => {
                     detailsDiv.innerHTML = `
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Title:</strong> ${data.title}</p>
-                                <p><strong>Company:</strong> ${data.company_name}</p>
-                                <p><strong>Location:</strong> ${data.location}</p>
-                                <p><strong>Salary:</strong> $${parseFloat(data.salary).toLocaleString()}</p>
-                                <p><strong>Status:</strong> <span class="badge bg-${data.status === 'active' ? 'success' : 'danger'}">${data.status}</span></p>
-                                <p><strong>Posted:</strong> ${new Date(data.created_at).toLocaleDateString()}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Total Applications:</strong> ${data.application_count}</p>
-                                <p><strong>Application Status Breakdown:</strong></p>
-                                <ul class="list-unstyled">
-                                    ${Object.entries(data.application_status).map(([status, count]) => `
-                                        <li>${status}: ${count}</li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        </div>
                         <div class="mt-4">
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
                                             <th>Applicant</th>
-                                            <th>Applied</th>
+                                            
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -339,7 +320,7 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                                         ${data.recent_applications.map(app => `
                                             <tr>
                                                 <td>${app.applicant_name}</td>
-                                                <td>${new Date(app.applied_at).toLocaleDateString()}</td>
+                                                
                                                 <td><span class="badge bg-${app.status === 'Pending' ? 'warning' : app.status === 'Shortlisted' ? 'info' : app.status === 'Hired' ? 'success' : 'danger'}">${app.status}</span></td>
                                             </tr>
                                         `).join('')}
