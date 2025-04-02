@@ -245,7 +245,7 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                                 <p class="text-muted">No jobs found matching your criteria.</p>
                             </div>
                         <?php else: ?>
-                            <div class="table-responsive text-center">
+                            <div class="table-responsive ">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>

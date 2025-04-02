@@ -200,7 +200,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover text-center">
+                            <table class="table table-hover">
                                 <thead">
                                     <tr>
                                         <th class="col-id">ID</th>

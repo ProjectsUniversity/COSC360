@@ -206,7 +206,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Employers Table -->
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive text-center">
+                        <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
