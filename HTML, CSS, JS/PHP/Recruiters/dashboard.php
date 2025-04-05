@@ -3,11 +3,11 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['employer_id'])) {
-    header("Location: recLogin.php");
+    header("Location: login.php");
     exit();
 }
 
-require_once 'config.php';
+require_once '../config.php';
 
 // Fetch recruiter data
 $employer_id = $_SESSION['employer_id'];
@@ -68,7 +68,7 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../CSS/Recruiters/dashboard.css">
+    <link rel="stylesheet" href="../../CSS/Recruiters/dashboard.css">
 </head>
 <body>
     <div class="d-flex">
@@ -102,7 +102,7 @@ try {
                     <ul class="dropdown-menu text-small shadow">
                         <li><a class="dropdown-item" href="settings.php"><i class="fa-solid fa-gear"></i> Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="logout.php"><i class="fa-solid fa-door-open"></i> Sign out</a></li>
+                        <li><a class="dropdown-item" href="../logout.php"><i class="fa-solid fa-door-open"></i> Sign out</a></li>
                     </ul>
                 </div>
             </div>

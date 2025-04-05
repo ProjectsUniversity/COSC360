@@ -7,7 +7,7 @@ if (isset($_SESSION['user_id'])) {
     header('Location: homepage.php');
     exit();
 } else if (isset($_SESSION['employer_id'])) {
-    header('Location: dashboard.php');
+    header('Location: Recruiters/dashboard.php');
     exit();
 }
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($employer && $password === $employer['password_hash']) {  // Direct string comparison
             $_SESSION['employer_id'] = $employer['employer_id'];
             $_SESSION['user_type'] = 'employer';
-            header('Location: dashboard.php');
+            header('Location: Recruiters/dashboard.php');
             exit();
         }
 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mt-3 text-center">
                     <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
                     <p><a href="forgot-password.php" class="text-muted">Forgot Password?</a></p>
-                    <p><a href="dashboard.php">Continue as guest</a></p>
+                    <p><a href="index.php">Continue as guest</a></p>
                 </div>
             </form>
         </div>
