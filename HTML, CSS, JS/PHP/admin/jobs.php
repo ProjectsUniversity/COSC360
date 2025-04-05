@@ -200,7 +200,7 @@ $filters = [
     'employer_id' => $_GET['employer_id'] ?? ''
 ];
 
-query = buildJobQuery($filters);
+$query = buildJobQuery($filters);
 $stmt = $pdo->prepare($query['query']);
 $stmt->execute($query['params']);
 $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
