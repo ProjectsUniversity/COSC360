@@ -188,7 +188,11 @@ try {
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <h5 class="card-title"><?php echo htmlspecialchars($job['title']); ?></h5>
+                                                <h5 class="card-title">
+                                                    <a href="job_applicants.php?job_id=<?php echo $job['job_id']; ?>">
+                                                        <?php echo htmlspecialchars($job['title']); ?>
+                                                    </a>
+                                                </h5>
                                                 <h6 class="card-subtitle mb-2 text-muted"><?php echo htmlspecialchars($job['company_name']); ?></h6>
                                             </div>
                                             <span class="badge bg-<?php echo getStatusColor($job['status']); ?>">
