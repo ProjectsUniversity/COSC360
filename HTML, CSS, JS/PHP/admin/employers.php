@@ -3,6 +3,123 @@ require_once '../config.php';
 require_once 'auth.php';
 requireAdmin();
 
+// Handle AJAX requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    $action = $_POST['action'] ?? '';
+    $employer_id = $_POST['employer_id'] ?? '';
+    $response = ['success' => false, 'message' => 'Invalid action'];
+
+    switch ($action) {
+        case 'create_employer':
+            // Validate input
+            $required_fields = ['company_name', 'email', 'password'];
+            foreach ($required_fields as $field) {
+                if (empty($_POST[$field])) {
+                    $response = ['success' => false, 'message' => 'All required fields must be filled out'];
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    exit();
+                }
+            }
+            
+            // Check if email already exists
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM employers WHERE email = ?");
+            $stmt->execute([$_POST['email']]);
+            if ($stmt->fetchColumn() > 0) {
+                $response = ['success' => false, 'message' => 'Email already exists'];
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                exit();
+            }
+            
+            try {
+                // Create new employer
+                $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location, status) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([
+                    $_POST['company_name'],
+                    $_POST['email'],
+                    password_hash($_POST['password'], PASSWORD_DEFAULT),
+                    $_POST['location'] ?? '',
+                    $_POST['status'] ?? 'active'
+                ]);
+                
+                $employerId = $pdo->lastInsertId();
+                
+                // Get the created employer with statistics
+                $stmt = $pdo->prepare("SELECT e.*, 
+                                      (SELECT COUNT(*) FROM jobs j WHERE j.employer_id = e.employer_id) as total_jobs,
+                                      (SELECT COUNT(*) FROM jobs j WHERE j.employer_id = e.employer_id AND j.status = 'active') as active_jobs,
+                                      (SELECT COUNT(*) FROM applications a 
+                                       JOIN jobs j ON a.job_id = j.job_id 
+                                       WHERE j.employer_id = e.employer_id) as total_applications
+                                      FROM employers e WHERE e.employer_id = ?");
+                $stmt->execute([$employerId]);
+                $employer = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                logAdminAction('create_employer', "Created new employer: {$employer['company_name']} (ID: $employerId)");
+                
+                $response = [
+                    'success' => true, 
+                    'message' => 'Employer created successfully',
+                    'employer' => [
+                        'employer_id' => $employer['employer_id'],
+                        'company_name' => $employer['company_name'],
+                        'email' => $employer['email'],
+                        'location' => $employer['location'],
+                        'created_at' => $employer['created_at'],
+                        'total_jobs' => $employer['total_jobs'],
+                        'active_jobs' => $employer['active_jobs'],
+                        'total_applications' => $employer['total_applications'],
+                        'status' => $employer['status'],
+                        'status_badge' => $employer['status'] === 'active' ? 'bg-success' : 'bg-danger',
+                        'status_text' => ucfirst($employer['status'])
+                    ]
+                ];
+            } catch (PDOException $e) {
+                $response = ['success' => false, 'message' => 'Error creating employer: ' . $e->getMessage()];
+            }
+            break;
+        case 'delete':
+            if ($employer_id) {
+                $stmt = $pdo->prepare("DELETE FROM employers WHERE employer_id = ?");
+                if ($stmt->execute([$employer_id])) {
+                    logAdminAction('delete_employer', "Deleted employer ID: $employer_id");
+                    $response = ['success' => true, 'message' => 'Employer deleted successfully', 'employer_id' => $employer_id];
+                } else {
+                    $response = ['success' => false, 'message' => 'Failed to delete employer'];
+                }
+            }
+            break;
+        case 'toggle_status':
+            if ($employer_id) {
+                $stmt = $pdo->prepare("UPDATE employers SET status = CASE WHEN status = 'active' THEN 'inactive' ELSE 'active' END WHERE employer_id = ?");
+                if ($stmt->execute([$employer_id])) {
+                    // Get the new status
+                    $stmt = $pdo->prepare("SELECT status FROM employers WHERE employer_id = ?");
+                    $stmt->execute([$employer_id]);
+                    $new_status = $stmt->fetchColumn();
+                    
+                    logAdminAction('toggle_employer_status', "Toggled status for employer ID: $employer_id");
+                    $response = [
+                        'success' => true, 
+                        'message' => 'Employer status updated successfully', 
+                        'employer_id' => $employer_id,
+                        'new_status' => $new_status,
+                        'badge_class' => $new_status === 'active' ? 'bg-success' : 'bg-danger',
+                        'status_text' => ucfirst($new_status)
+                    ];
+                } else {
+                    $response = ['success' => false, 'message' => 'Failed to update employer status'];
+                }
+            }
+            break;
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
 // Handle employer actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -178,6 +295,9 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="col-md-9 col-lg-10 p-4 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Employer Management</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployerModal">
+                        <i class="bi bi-building-add"></i> Add Employer
+                    </button>
                 </div>
 
                 <!-- Filters -->
@@ -223,7 +343,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </thead>
                                 <tbody>
                                     <?php foreach ($employers as $employer): ?>
-                                    <tr>
+                                    <tr data-employer-id="<?php echo $employer['employer_id']; ?>">
                                         <td><?php echo $employer['employer_id']; ?></td>
                                         <td><?php echo htmlspecialchars($employer['company_name']); ?></td>
                                         <td><?php echo htmlspecialchars($employer['email']); ?></td>
@@ -232,7 +352,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo $employer['active_jobs']; ?></td>
                                         <td><?php echo $employer['total_applications']; ?></td>
                                         <td>
-                                            <span class="badge bg-<?php echo $employer['status'] === 'active' ? 'success' : 'danger'; ?>">
+                                            <span class="badge bg-<?php echo $employer['status'] === 'active' ? 'success' : 'danger'; ?> status-badge">
                                                 <?php echo ucfirst(htmlspecialchars($employer['status'] ?? 'unknown')); ?>
                                             </span>
                                         </td>
@@ -242,16 +362,14 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                         onclick="viewDetails(<?php echo $employer['employer_id']; ?>)">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
-                                                <form method="POST" class="d-inline" 
-                                                      onsubmit="return confirm('Are you sure you want to toggle this employer\'s status?');">
+                                                <form method="POST" class="d-inline ajax-form">
                                                     <input type="hidden" name="action" value="toggle_status">
                                                     <input type="hidden" name="employer_id" value="<?php echo $employer['employer_id']; ?>">
                                                     <button type="submit" class="btn btn-sm btn-warning me-2">
                                                         <i class="bi bi-toggle-on"></i>
                                                     </button>
                                                 </form>
-                                                <form method="POST" class="d-inline" 
-                                                      onsubmit="return confirm('Are you sure you want to delete this employer? This action cannot be undone.');">
+                                                <form method="POST" class="d-inline ajax-form">
                                                     <input type="hidden" name="action" value="delete">
                                                     <input type="hidden" name="employer_id" value="<?php echo $employer['employer_id']; ?>">
                                                     <button type="submit" class="btn btn-sm btn-danger">
@@ -285,12 +403,214 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
+    
+    <!-- Add Employer Modal -->
+    <div class="modal fade" id="addEmployerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Employer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEmployerForm">
+                        <div class="mb-3">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="companyName" name="company_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location">
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Employer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Add notification system
+        function showNotification(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alertDiv, mainContent.firstChild.nextSibling);
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 150);
+            }, 3000);
+        }
+
+        // Initialize AJAX forms for employer actions
+        function initializeAjaxForms() {
+            // Handle existing forms (for toggle status and delete)
+            document.querySelectorAll('form.ajax-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const action = this.querySelector('[name="action"]').value;
+                    const employerId = this.querySelector('[name="employer_id"]').value;
+                    
+                    // Get confirmation
+                    let confirmed = false;
+                    if (action === 'toggle_status') {
+                        confirmed = confirm('Are you sure you want to toggle this employer\'s status?');
+                    } else if (action === 'delete') {
+                        confirmed = confirm('Are you sure you want to delete this employer? This action cannot be undone.');
+                    }
+                    
+                    if (confirmed) {
+                        const formData = new FormData(this);
+                        
+                        // Use fetch API for AJAX request
+                        fetch('employers.php', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                if (action === 'delete') {
+                                    // Remove the row from the table
+                                    const row = document.querySelector(`tr[data-employer-id="${data.employer_id}"]`);
+                                    if (row) {
+                                        row.remove();
+                                        showNotification('Employer deleted successfully');
+                                    }
+                                } else if (action === 'toggle_status') {
+                                    // Update the status badge
+                                    const statusBadge = document.querySelector(`tr[data-employer-id="${data.employer_id}"] .status-badge`);
+                                    if (statusBadge) {
+                                        statusBadge.className = `badge ${data.badge_class} status-badge`;
+                                        statusBadge.textContent = data.status_text;
+                                        showNotification('Employer status updated successfully');
+                                    }
+                                }
+                            } else {
+                                showNotification(data.message, 'danger');
+                            }
+                        })
+                        .catch(error => {
+                            showNotification('An error occurred while processing your request', 'danger');
+                        });
+                    }
+                });
+            });
+            
+            // Handle add employer form
+            document.getElementById('addEmployerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                formData.append('action', 'create_employer');
+                
+                // Use fetch API for AJAX request
+                fetch('employers.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add the new employer to the table
+                        const employer = data.employer;
+                        const tbody = document.querySelector('table tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.setAttribute('data-employer-id', employer.employer_id);
+                        newRow.innerHTML = `
+                            <td>${employer.employer_id}</td>
+                            <td>${employer.company_name}</td>
+                            <td>${employer.email}</td>
+                            <td>${employer.location || ''}</td>
+                            <td>${employer.total_jobs}</td>
+                            <td>${employer.active_jobs}</td>
+                            <td>${employer.total_applications}</td>
+                            <td>
+                                <span class="badge ${employer.status_badge} status-badge">
+                                    ${employer.status_text}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-info me-2" 
+                                            onclick="viewDetails(${employer.employer_id})">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <form method="POST" class="d-inline ajax-form">
+                                        <input type="hidden" name="action" value="toggle_status">
+                                        <input type="hidden" name="employer_id" value="${employer.employer_id}">
+                                        <button type="submit" class="btn btn-sm btn-warning me-2">
+                                            <i class="bi bi-toggle-on"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" class="d-inline ajax-form">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="employer_id" value="${employer.employer_id}">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        `;
+                        tbody.prepend(newRow); // Add at the top
+                        
+                        // Reset the form and close the modal
+                        this.reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addEmployerModal'));
+                        modal.hide();
+                        
+                        // Initialize AJAX on new forms
+                        initializeAjaxForms();
+                        
+                        showNotification('Employer created successfully');
+                    } else {
+                        showNotification(data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    showNotification('An error occurred while processing your request', 'danger');
+                    console.error('Error:', error);
+                });
+            });
+        }
+        
         function viewDetails(employerId) {
             const modal = new bootstrap.Modal(document.getElementById('employerModal'));
             const detailsDiv = document.getElementById('employerDetails');
+            
+            // Display loading indicator
+            detailsDiv.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Loading...</p></div>';
             
             // Fetch employer details
             fetch(`get-employer-details.php?employer_id=${employerId}`)
@@ -310,7 +630,7 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <p><strong>Total Jobs:</strong> ${data.total_jobs}</p>
                                 <p><strong>Active Jobs:</strong> ${data.active_jobs}</p>
                                 <p><strong>Total Applications:</strong> ${data.total_applications}</p>
-                                <p><strong>Average Applications per Job:</strong> ${(data.total_applications / data.total_jobs).toFixed(1)}</p>
+                                <p><strong>Average Applications per Job:</strong> ${(data.total_jobs > 0 ? (data.total_applications / data.total_jobs).toFixed(1) : 0)}</p>
                             </div>
                         </div>
                         <div class="mt-4">
@@ -325,13 +645,16 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${data.recent_jobs.map(job => `
-                                            <tr>
-                                                <td>${job.title}</td>
-                                                <td><span class="badge bg-${job.status === 'active' ? 'success' : 'danger'}">${job.status}</span></td>
-                                                <td>${job.application_count}</td>
-                                            </tr>
-                                        `).join('')}
+                                        ${data.recent_jobs && data.recent_jobs.length > 0 ? 
+                                            data.recent_jobs.map(job => `
+                                                <tr>
+                                                    <td>${job.title}</td>
+                                                    <td><span class="badge bg-${job.status === 'active' ? 'success' : 'danger'}">${job.status}</span></td>
+                                                    <td>${job.application_count}</td>
+                                                </tr>
+                                            `).join('') : 
+                                            '<tr><td colspan="3" class="text-center">No jobs found</td></tr>'
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -344,6 +667,9 @@ $employers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             modal.show();
         }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeAjaxForms);
     </script>
 </body>
 </html>
