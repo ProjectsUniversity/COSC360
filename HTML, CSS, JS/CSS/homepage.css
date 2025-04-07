@@ -373,3 +373,42 @@ body {
         gap: 1rem;
     }
 }
+
+.job-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.save-btn {
+    background-color: var(--button-bg, #2196f3);
+    color: var(--button-text, #fff);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.save-btn:hover {
+    background-color: var(--button-hover, #1976d2);
+}
+
+.save-btn.saved {
+    background-color: var(--button-hover, #1976d2);
+}
+
+.save-btn.saved i {
+    animation: bookmark-saved 0.3s ease;
+}
+
+@keyframes bookmark-saved {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}

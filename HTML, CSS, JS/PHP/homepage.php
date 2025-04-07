@@ -3,7 +3,6 @@ session_start();
 require_once('config.php');
 
 try {
-
     $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
                           e.company_name, e.employer_id
                           FROM jobs j 
@@ -27,8 +26,7 @@ try {
     <title>JobSwipe - Find Your Next Career</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="../CSS/homepage.css" />
-    <script src="../JS/homepage.js" defer></script>
-    <script src="../JS/logout.js" defer></script>
+    
     <style>
         .company-link {
             color: inherit;
@@ -45,7 +43,7 @@ try {
         }
     </style>
 </head>
-<body>
+<body <?php if (isset($_SESSION['user_id'])) echo 'data-user-id="' . $_SESSION['user_id'] . '"'; ?>>
     <div class="sidebar">
         <h2>JobSwipe</h2>
         <?php if (isset($_SESSION['user_id'])): ?>
@@ -76,49 +74,34 @@ try {
                 <span id="job-salary"><i class="fas fa-dollar-sign"></i></span>
                 <span id="job-posted"><i class="fas fa-calendar"></i></span>
             </div>
-            <div class="social-icons">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <i class="fas fa-heart" onclick="likeJob()"></i>
-                    <i class="fas fa-bookmark" onclick="saveJob()"></i>
-                <?php endif; ?>
-                <i class="fas fa-share" onclick="shareJob()"></i>
-            </div>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="job-actions">
+                    <button onclick="saveJob()" class="save-btn" id="save-btn">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Save Job</span>
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
         <div class="controls">
-            <div class="actions">
-                <button class="reject" onclick="nextJob('reject')">Reject</button>
-                <button class="apply" onclick="applyToJob()">Apply</button>
+            <div class="action">
+                <button onclick="rejectJob()" class="reject">
+                    <i class="fas fa-times"></i>
+                    Not Interested
+                </button>
+                <button onclick="applyToJob()" class="apply">
+                    <i class="fas fa-paper-plane"></i>
+                    Easy Apply
+                </button>
             </div>
-            <button onclick="nextJob('reject')"><i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <script>
-        const jobs = <?php echo $jobsJson; ?>;
-        let currentIndex = 0;
-
-        function viewCompanyProfile() {
-            const currentJob = jobs[currentIndex];
-            if (currentJob && currentJob.employer_id) {
-                window.location.href = `company-dashboard.php?employer_id=${currentJob.employer_id}`;
-            }
-        }
-        
-        function updateJobCard() {
-            const job = jobs[currentIndex];
-            document.getElementById('job-title').textContent = job.title;
-            document.getElementById('company-link').textContent = job.company_name;
-            document.getElementById('job-description').textContent = job.description;
-            document.getElementById('job-location').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${job.location}`;
-            document.getElementById('job-salary').innerHTML = `<i class="fas fa-dollar-sign"></i> ${job.salary}`;
-            document.getElementById('job-posted').innerHTML = `<i class="fas fa-calendar"></i> ${formatDate(job.created_at)}`;
-        }
-        
-
-        if (jobs.length > 0) {
-            updateJobCard();
-        }
-    </script>
     <script src="../JS/theme.js"></script>
+    <script src="../JS/homepage.js"></script>
+    <script>
+        // Initialize jobs data from PHP
+        initializeJobs(<?php echo $jobsJson; ?>);
+    </script>
 </body>
 </html>
