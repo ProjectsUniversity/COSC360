@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && $password === $user['password_hash']) {  // Direct string comparison
+        if ($user && password_verify($password, $user['password_hash'])) { 
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_type'] = 'user';
             header('Location: homepage.php');
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $employer = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($employer && $password === $employer['password_hash']) {  // Direct string comparison
+        if ($employer && password_verify($password, $employer['password_hash'])) {  
             $_SESSION['employer_id'] = $employer['employer_id'];
             $_SESSION['user_type'] = 'employer';
             header('Location: Recruiters/dashboard.php');

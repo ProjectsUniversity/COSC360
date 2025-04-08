@@ -111,12 +111,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" id="password" required>
+                    <input type="password" class="form-control" name="password" id="password" required minlength="8">
+                    <div class="form-text">Password must be at least 8 characters long.</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="confirm_password" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" required>
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" required minlength="8">
                 </div>
 
                 <div class="mb-3">
