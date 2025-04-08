@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $company_name = htmlspecialchars($_POST['company_name'] ?? '', ENT_QUOTES, 'UTF-8');
             
-            $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location) 
-                                  VALUES (?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location)
+                                  VALUES (?, ?, ?, ?)");
             $stmt->execute([$company_name, $email, $password_hash, $location]);
             
             $_SESSION['employer_id'] = $pdo->lastInsertId();
