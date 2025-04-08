@@ -45,7 +45,7 @@ try {
     </div>
 
     <div class="main-content">
-        <h1>Saved Jobs</h1>
+        <h1 style="margin-left: 2%;">Saved Jobs</h1>
         <div class="saved-jobs-container">
             <?php if (empty($savedJobs)): ?>
                 <div class="no-jobs-message">
