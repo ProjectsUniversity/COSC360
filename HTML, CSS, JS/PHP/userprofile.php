@@ -43,12 +43,12 @@ try {
                         $maxSize = 5 * 1024 * 1024; // 5MB
                         
                         if (!in_array($_FILES['resume']['type'], $allowedTypes)) {
-                            $_SESSION['error'] = "Invalid file type. Please upload a PDF or Word document.";
+                            $_SESSION['error'] = "Invalid file type.";
                             break;
                         }
                         
                         if ($_FILES['resume']['size'] > $maxSize) {
-                            $_SESSION['error'] = "File is too large. Maximum size is 5MB.";
+                            $_SESSION['error'] = "File is too large.";
                             break;
                         }
                         
@@ -72,13 +72,18 @@ try {
                                 unlink($oldFile);
                             }
                         }
+                        error_log("UPLOAD_DIR: " . UPLOAD_DIR);
                         
+                        error_log("Temp file path: " . $_FILES['resume']['tmp_name']);
+                        error_log("Destination file path: " . $filepath);
+                        error_log("Attempting to move uploaded file...");
                         if (move_uploaded_file($_FILES['resume']['tmp_name'], $filepath)) {
                             $stmt = $pdo->prepare("UPDATE users SET resume_path = ? WHERE user_id = ?");
                             $stmt->execute([$filename, $_SESSION['user_id']]);
                             $_SESSION['message'] = "Resume updated successfully!";
                         } else {
-                            error_log("Upload failed. Error: " . error_get_last()['message']);
+                            $error_message = error_get_last()['message'];
+                            error_log("Upload failed. Error: " . $error_message);
                             $_SESSION['error'] = "Failed to upload resume. Please try again.";
                         }
                     }
