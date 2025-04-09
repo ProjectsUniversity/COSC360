@@ -52,7 +52,7 @@ try {
             <button class="theme-toggle" onclick="toggleTheme()">
                 <i class="fas fa-moon"></i> Dark Mode
             </button>
-            <a href="#" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         <?php else: ?>
             <a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a>
             <a href="register.php"><i class="fas fa-user-plus"></i> Register</a>
