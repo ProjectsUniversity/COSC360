@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     location VARCHAR(255),
     resume_path VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'active',  -- Add status column to users table
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS employers (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     location VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'active',  -- Add status column to employers table
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -58,6 +60,31 @@ CREATE INDEX idx_saved_jobs_user ON saved_jobs(user_id);
 CREATE INDEX idx_saved_jobs_job ON saved_jobs(job_id);
 CREATE INDEX idx_saved_jobs_date ON saved_jobs(saved_at DESC);
 
+-- Create messages table
+CREATE TABLE IF NOT EXISTS messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sender_type ENUM('user', 'employer') NOT NULL,
+    -- Add indexes for better query performance
+    INDEX idx_sender (sender_id, sender_type),
+    INDEX idx_receiver (receiver_id),
+    INDEX idx_created_at (created_at)
+);
+
+-- Create message_status table for tracking read/unread messages
+CREATE TABLE IF NOT EXISTS message_status (
+    status_id INT AUTO_INCREMENT PRIMARY KEY,
+    message_id INT NOT NULL,
+    recipient_id INT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    read_at TIMESTAMP NULL,
+    FOREIGN KEY (message_id) REFERENCES messages(message_id),
+    INDEX idx_recipient_unread (recipient_id, is_read)
+);
+
 INSERT INTO employers (company_name, email, password_hash, location)
 VALUES ('Tech Solutions Inc', 'hr@techsolutions.com', 'hashed_password_123', 'New York');
 INSERT INTO employers (company_name, email, password_hash, location)
@@ -93,12 +120,6 @@ VALUES (
     105000.00,
     'active'
 );
-
--- Add status column to users table
-ALTER TABLE users ADD COLUMN status VARCHAR(50) DEFAULT 'active' AFTER resume_path;
-
--- Add status column to employers table
-ALTER TABLE employers ADD COLUMN status VARCHAR(50) DEFAULT 'active' AFTER location;
 
 -- Update existing users and employers to have 'active' status by default
 UPDATE users SET status = 'active' WHERE status IS NULL;

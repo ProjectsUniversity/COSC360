@@ -279,3 +279,31 @@ function startPolling() {
     // Then check every 5 seconds
     setInterval(checkForNewJobs, 5000);
 }
+
+// Check for unread messages
+function checkUnreadMessages() {
+    if (!document.body.dataset.userId) return; // Only check if user is logged in
+    
+    fetch('api/get-message-count.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const badge = document.getElementById('unread-badge');
+                if (badge) {
+                    if (data.unread_count > 0) {
+                        badge.textContent = data.unread_count;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error checking unread messages:', error));
+}
+
+// Initialize unread message checking
+if (document.body.dataset.userId) {
+    checkUnreadMessages();
+    setInterval(checkUnreadMessages, 10000); // Check every 10 seconds
+}

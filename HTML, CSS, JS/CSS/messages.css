@@ -1,0 +1,348 @@
+.page-container {
+    height: 100vh;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+}
+
+.messages-container {
+    display: flex;
+    height: calc(100vh - 100px);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.contacts-list {
+    width: 350px; /* Increased width to accommodate job titles */
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.contacts-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.contacts-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.contacts-search {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#contact-search {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+#contacts-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.contact-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.contact-item:hover {
+    background-color: #f8f9fa;
+}
+
+.contact-item.active {
+    background-color: #e9ecef;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.contact-name {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-email {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.job-applied {
+    font-size: 0.9em;
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.last-message {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+#chat-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+#messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    position: relative;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.message.received {
+    align-self: flex-start;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-bottom-left-radius: 5px;
+}
+
+.message-timestamp {
+    font-size: 0.7rem;
+    margin-top: 5px;
+    opacity: 0.7;
+}
+
+.message-date {
+    text-align: center;
+    margin: 20px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.message-input-container {
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+#message-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    resize: none;
+    height: 45px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.send-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
+.unread-badge {
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.applicant-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.applicant-item:hover {
+    background-color: #f8f9fa;
+}
+
+.applicant-item.active {
+    background-color: #e9ecef;
+}
+
+.contact-info {
+    flex: 1;
+}
+
+.contact-email {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.job-applied {
+    font-size: 0.9em;
+    color: #0d6efd;
+    margin-bottom: 5px;
+}
+
+.start-chat-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.start-chat-btn:hover {
+    background-color: #0b5ed7;
+}
+
+.nav-tabs {
+    padding: 0 15px;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 10px;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #495057;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background: none;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #e9ecef;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom: 2px solid #0d6efd;
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-pane {
+    flex: 1;
+    overflow-y: auto;
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-pane.show {
+    display: block;
+}
+
+#active-chats-container,
+#applicants-container {
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .messages-container {
+        flex-direction: column;
+        height: calc(100vh - 80px);
+    }
+
+    .contacts-list {
+        width: 100%;
+        height: 40%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chat-area {
+        height: 60%;
+    }
+}

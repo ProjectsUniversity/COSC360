@@ -37,4 +37,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Check for unread messages
+    function checkUnreadMessages() {
+        fetch('../api/get-message-count.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const badge = document.getElementById('unread-badge');
+                    if (badge) {
+                        if (data.unread_count > 0) {
+                            badge.textContent = data.unread_count;
+                            badge.style.display = 'inline';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                }
+            })
+            .catch(error => console.error('Error checking unread messages:', error));
+    }
+
+    // Initialize unread message checking and poll every 10 seconds
+    checkUnreadMessages();
+    setInterval(checkUnreadMessages, 10000);
 });

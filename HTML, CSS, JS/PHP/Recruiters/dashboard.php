@@ -88,6 +88,11 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="../messages.php" class="nav-link">
+                            <i class="fa-solid fa-envelope"></i> Messages <span id="unread-badge" class="badge bg-danger" style="display: none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="addJobs.php" class="nav-link">
                             <i class="fa-solid fa-plus"></i> Post New Job
                         </a>

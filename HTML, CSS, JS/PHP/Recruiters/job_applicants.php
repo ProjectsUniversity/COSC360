@@ -44,6 +44,7 @@ try {
     <meta charset="UTF-8">
     <title>Applicants for Job <?php echo htmlspecialchars($job_id); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .status-tag {
             font-weight: bold;
@@ -55,6 +56,20 @@ try {
         .status-shortlisted { background-color: orange; }
         .status-pending { background-color: gray; }
         .status-rejected { background-color: red; }
+        
+        .message-btn {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .message-btn:hover {
+            background-color: #0b5ed7;
+        }
     </style>
 </head>
 <body class="p-3">
@@ -82,7 +97,6 @@ try {
             </thead>
             <tbody>
             <?php foreach ($applications as $app): 
-                    // Determine the current status (default to "pending" if null)
                     $status = $app['status'] ?? 'pending';
                     $statusClass = ($status === 'hired') 
                                   ? 'status-hired' 
@@ -102,19 +116,23 @@ try {
                         </span>
                     </td>
                     <td>
-                        <!-- Each button is linked to a data attribute; we handle the update via JS -->
-                        <form class="ajax-status-form" data-app-id="<?php echo $app['application_id']; ?>" data-new-status="hired" style="display:inline-block;">
-                            <button type="submit" class="btn btn-success btn-sm">Hire</button>
-                        </form>
-                        <form class="ajax-status-form" data-app-id="<?php echo $app['application_id']; ?>" data-new-status="shortlisted" style="display:inline-block;">
-                            <button type="submit" class="btn btn-warning btn-sm">Shortlist</button>
-                        </form>
-                        <form class="ajax-status-form" data-app-id="<?php echo $app['application_id']; ?>" data-new-status="rejected" style="display:inline-block;">
-                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                        </form>
+                        <select class="form-select status-select" 
+                                data-application-id="<?php echo $app['application_id']; ?>">
+                            <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="shortlisted" <?php echo $status === 'shortlisted' ? 'selected' : ''; ?>>Shortlist</option>
+                            <option value="hired" <?php echo $status === 'hired' ? 'selected' : ''; ?>>Hire</option>
+                            <option value="rejected" <?php echo $status === 'rejected' ? 'selected' : ''; ?>>Reject</option>
+                        </select>
+                        <button class="message-btn mt-2" 
+                                data-user-id="<?php echo $app['user_id']; ?>"
+                                data-user-name="<?php echo htmlspecialchars($app['full_name']); ?>"
+                                onclick="openMessageModal(this)">
+                            <i class="fas fa-envelope"></i> Message
+                        </button>
                     </td>
                     <td>
-                        <a href="application_detail.php?application_id=<?php echo $app['application_id']; ?>" class="btn btn-info btn-sm">View Details</a>
+                        <a href="application_detail.php?application_id=<?php echo $app['application_id']; ?>" 
+                           class="btn btn-info btn-sm">View Details</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -124,7 +142,66 @@ try {
     
     <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
     
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message to <span id="recipientName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="messageText" class="form-control" rows="4" 
+                        placeholder="Type your message here..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+    let currentUserId = null;
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+
+    function openMessageModal(btn) {
+        currentUserId = btn.dataset.userId;
+        document.getElementById('recipientName').textContent = btn.dataset.userName;
+        messageModal.show();
+    }
+
+    function sendMessage() {
+        if (!currentUserId || !messageText.value.trim()) return;
+
+        fetch('../api/start-conversation.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                message: messageText.value.trim()
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                messageModal.hide();
+                document.getElementById('messageText').value = '';
+                alert('Message sent successfully!');
+            } else {
+                alert(data.error || 'Failed to send message');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the message');
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function(){
         document.querySelectorAll(".ajax-status-form").forEach(function(form){
             form.addEventListener("submit", function(e){

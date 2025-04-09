@@ -50,9 +50,9 @@ try {
 </head>
 <body <?php if (isset($_SESSION['user_id'])) echo 'data-user-id="' . $_SESSION['user_id'] . '"'; ?>>
     <div class="sidebar">
-        <h2>JobSwipe</h2>
-        <?php if (isset($_SESSION['user_id'])): ?>
+        <h2>JobSwipe</h2>        <?php if (isset($_SESSION['user_id'])): ?>
             <a href="userprofile.php"><i class="fas fa-user"></i> Your Account</a>
+            <a href="messages.php"><i class="fas fa-envelope"></i> Messages <span id="unread-badge" class="badge bg-danger" style="display: none;">0</span></a>
             <a href="saved-jobs.php"><i class="fas fa-bookmark"></i> Saved Jobs</a>
             <button class="theme-toggle" onclick="toggleTheme()">
                 <i class="fas fa-moon"></i> Dark Mode
