@@ -186,7 +186,7 @@ if (!empty($where)) {
     $query .= " WHERE " . implode(" AND ", $where);
 }
 
-$query .= " ORDER BY created_at DESC";
+$query .= " ORDER BY e.employer_id DESC";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);

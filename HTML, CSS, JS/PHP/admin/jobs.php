@@ -204,7 +204,7 @@ function buildJobQuery($filters) {
         $query .= " WHERE " . implode(" AND ", $where);
     }
     
-    $query .= " ORDER BY j.created_at DESC";
+    $query .= " ORDER BY j.job_id DESC";
     
     return ['query' => $query, 'params' => $params];
 }
