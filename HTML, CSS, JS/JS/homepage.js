@@ -1,15 +1,24 @@
 // Get jobs data from PHP
 let jobs = [];
 let currentIndex = 0;
+let lastUpdateTime = new Date().toISOString();
 
 // Function to format date strings
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-    });
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+        return 'Today';
+    } else if (diffDays === 1) {
+        return 'Yesterday';
+    } else if (diffDays < 7) {
+        return `${diffDays} days ago`;
+    } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 }
 
 // Function to format salary numbers
@@ -17,6 +26,7 @@ function formatSalary(salary) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
+        minimumFractionDigits: 0,
         maximumFractionDigits: 0
     }).format(salary);
 }
@@ -210,7 +220,11 @@ function handleSearch(searchInput, searchResults) {
 function initializeJobs(jobsData) {
     jobs = jobsData;
     if (jobs.length > 0) {
+        // Use the most recent job's creation time as last update time
+        lastUpdateTime = jobs[0].created_at;
         updateJobCard();
+        // Start polling for new jobs
+        startPolling();
     }
     
     // Initialize search functionality
@@ -230,4 +244,38 @@ function initializeJobs(jobsData) {
             searchResults.classList.remove('active');
         }
     });
+}
+
+// Check for new jobs
+function checkForNewJobs() {
+    fetch(`api/job-updates.php?lastUpdate=${encodeURIComponent(lastUpdateTime)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.jobs && data.jobs.length > 0) {
+                console.log('New jobs found:', data.jobs);
+                // Add new jobs to the end of the array instead of the beginning
+                jobs.push(...data.jobs);
+                // Update the last update time
+                lastUpdateTime = data.currentTime;
+                // Move to the newest job that was just added
+                currentIndex = jobs.length - 1;
+                updateJobCard();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking for new jobs:', error);
+        });
+}
+
+// Start polling with a faster initial check
+function startPolling() {
+    // Check immediately after initialization
+    setTimeout(checkForNewJobs, 1000);
+    // Then check every 5 seconds
+    setInterval(checkForNewJobs, 5000);
 }

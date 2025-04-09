@@ -12,6 +12,11 @@ try {
     $stmt->execute();
     $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Format dates for proper JSON encoding
+    foreach ($jobs as &$job) {
+        $job['created_at'] = date('c', strtotime($job['created_at']));
+    }
+    
     $jobsJson = json_encode($jobs);
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
