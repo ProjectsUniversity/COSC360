@@ -39,6 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
         try {
+            $pdo->beginTransaction();
+
             $sql = "INSERT INTO jobs (employer_id, title, description, location, salary, status, created_at) 
                     VALUES (:employer_id, :title, :description, :location, :salary, :status, NOW())";
             $stmt = $pdo->prepare($sql);
@@ -53,6 +55,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ];
 
             if ($stmt->execute($params)) {
+                $jobId = $pdo->lastInsertId();
+                
+                // Fetch the complete job details including company name
+                $stmt = $pdo->prepare("SELECT j.*, e.company_name 
+                                     FROM jobs j 
+                                     JOIN employers e ON j.employer_id = e.employer_id 
+                                     WHERE j.job_id = ?");
+                $stmt->execute([$jobId]);
+                $newJob = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $pdo->commit();
+
+                if ($_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                    $response = [
+                        'success' => true,
+                        'message' => "Job \"" . htmlspecialchars($title) . "\" has been posted successfully!",
+                        'job' => $newJob
+                    ];
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    exit;
+                }
                 $_SESSION['success_message'] = "Job \"" . htmlspecialchars($title) . "\" has been posted successfully!";
                 header("Location: dashboard.php");
                 exit();
@@ -179,5 +203,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('addJobs.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Redirect back to recruiter dashboard
+                    window.location.href = 'dashboard.php';
+                } else {
+                    // Display errors
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger';
+                    const errorList = document.createElement('ul');
+                    errorList.className = 'mb-0';
+                    data.errors.forEach(error => {
+                        const li = document.createElement('li');
+                        li.textContent = error;
+                        errorList.appendChild(li);
+                    });
+                    errorDiv.appendChild(errorList);
+                    
+                    // Remove any existing error messages
+                    const existingErrors = document.querySelector('.alert-danger');
+                    if (existingErrors) {
+                        existingErrors.remove();
+                    }
+                    
+                    // Insert new error messages at the top of the form
+                    const form = document.querySelector('form');
+                    form.insertBefore(errorDiv, form.firstChild);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            });
+        });
+    </script>
 </body>
 </html>

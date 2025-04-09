@@ -5,9 +5,12 @@ requireAdmin();
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    header('Content-Type: application/xml; charset=utf-8');
     $action = $_POST['action'] ?? '';
     $jobId = $_POST['job_id'] ?? '';
-    $response = ['success' => false, 'message' => 'Invalid action'];
+    
+    // Start XML output
+    $xml = new SimpleXMLElement('<response/>');
     
     switch ($action) {
         case 'create_job':
@@ -15,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
             $required_fields = ['title', 'employer_id', 'description', 'location', 'salary'];
             foreach ($required_fields as $field) {
                 if (empty($_POST[$field])) {
-                    $response = ['success' => false, 'message' => 'All required fields must be filled out'];
-                    header('Content-Type: application/json');
-                    echo json_encode($response);
+                    $xml->addChild('success', 'false');
+                    $xml->addChild('message', 'All required fields must be filled out');
+                    echo $xml->asXML();
                     exit();
                 }
             }
@@ -48,24 +51,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                 
                 logAdminAction('create_job', "Created new job: {$job['title']} (ID: $jobId)");
                 
-                $response = [
-                    'success' => true, 
-                    'message' => 'Job created successfully',
-                    'job' => [
-                        'job_id' => $job['job_id'],
-                        'title' => $job['title'],
-                        'company_name' => $job['company_name'],
-                        'location' => $job['location'],
-                        'salary' => $job['salary'],
-                        'created_at' => $job['created_at'],
-                        'application_count' => $job['application_count'],
-                        'status' => $job['status'],
-                        'badge_class' => $job['status'] === 'active' ? 'success' : 'danger',
-                        'status_text' => ucfirst($job['status'])
-                    ]
-                ];
+                $xml->addChild('success', 'true');
+                $xml->addChild('message', 'Job created successfully');
+                $jobNode = $xml->addChild('job');
+                $jobNode->addChild('job_id', $job['job_id']);
+                $jobNode->addChild('title', htmlspecialchars($job['title']));
+                $jobNode->addChild('company_name', htmlspecialchars($job['company_name']));
+                $jobNode->addChild('location', htmlspecialchars($job['location']));
+                $jobNode->addChild('salary', $job['salary']);
+                $jobNode->addChild('created_at', $job['created_at']);
+                $jobNode->addChild('application_count', $job['application_count']);
+                $jobNode->addChild('status', $job['status']);
+                $jobNode->addChild('badge_class', $job['status'] === 'active' ? 'success' : 'danger');
+                $jobNode->addChild('status_text', ucfirst($job['status']));
+
             } catch (PDOException $e) {
-                $response = ['success' => false, 'message' => 'Error creating job: ' . $e->getMessage()];
+                // Ensure the XML response indicates failure
+                if ($xml->xpath('//success')) { // Check if success node already exists
+                     $xml->success = 'false'; // Update existing node
+                } else {
+                     $xml->addChild('success', 'false'); // Add new node
+                }
+                 if ($xml->xpath('//message')) {
+                     $xml->message = 'Error creating job: ' . htmlspecialchars($e->getMessage());
+                 } else {
+                     $xml->addChild('message', 'Error creating job: ' . htmlspecialchars($e->getMessage()));
+                 }
             }
             break;
         case 'delete':
@@ -84,7 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                         
                         $pdo->commit();
                         logAdminAction('delete_job', "Deleted job ID: $jobId");
-                        $response = ['success' => true, 'message' => 'Job deleted successfully', 'job_id' => $jobId];
+                        $xml->addChild('success', 'true');
+                        $xml->addChild('message', 'Job deleted successfully');
+                        $xml->addChild('job_id', $jobId);
                     } else if ($action === 'toggle_status') {
                         $stmt = $pdo->prepare("UPDATE jobs SET status = CASE WHEN status = 'active' THEN 'inactive' ELSE 'active' END WHERE job_id = ?");
                         if ($stmt->execute([$jobId])) {
@@ -94,28 +107,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                             $new_status = $stmt->fetchColumn();
                             
                             logAdminAction('toggle_job_status', "Toggled status for job ID: $jobId");
-                            $response = [
-                                'success' => true, 
-                                'message' => 'Job status updated successfully', 
-                                'job_id' => $jobId,
-                                'new_status' => $new_status,
-                                'badge_class' => $new_status === 'active' ? 'success' : 'danger',
-                                'status_text' => ucfirst($new_status)
-                            ];
+                            $xml->addChild('success', 'true');
+                            $xml->addChild('message', 'Job status updated successfully');
+                            $xml->addChild('job_id', $jobId);
+                            $xml->addChild('new_status', $new_status);
+                            $xml->addChild('badge_class', $new_status === 'active' ? 'success' : 'danger');
+                            $xml->addChild('status_text', ucfirst($new_status));
                         }
                     }
                 } catch (PDOException $e) {
                     if ($pdo->inTransaction()) {
                         $pdo->rollBack();
                     }
-                    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+                    $xml->addChild('success', 'false');
+                    $xml->addChild('message', 'Database error: ' . htmlspecialchars($e->getMessage()));
                 }
             }
             break;
     }
     
-    header('Content-Type: application/json');
-    echo json_encode($response);
+    // If no specific action matched or default case needed
+    if ($xml->count() == 0) { // Check if anything was added
+         $xml->addChild('success', 'false');
+         $xml->addChild('message', 'Invalid action or no data processed.');
+    }
+    echo $xml->asXML();
     exit();
 }
 
@@ -188,7 +204,7 @@ function buildJobQuery($filters) {
         $query .= " WHERE " . implode(" AND ", $where);
     }
     
-    $query .= " ORDER BY j.created_at DESC";
+    $query .= " ORDER BY j.job_id DESC";
     
     return ['query' => $query, 'params' => $params];
 }
@@ -556,27 +572,41 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                         },
                         body: formData
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.text(); // Get text first
+                    })
+                    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml")) // Parse as XML
+                    .then(xmlDoc => {
+                        if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                            showNotification('Error parsing XML response', 'danger');
+                            console.error("XML Parsing Error:", xmlDoc ? xmlDoc.getElementsByTagName('parsererror')[0] : 'No XML Document');
+                            return;
+                        }
+                        
+                        const success = xmlDoc.getElementsByTagName('success')[0]?.textContent === 'true';
+                        const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'An unknown error occurred.';
+                        const jobIdResponse = xmlDoc.getElementsByTagName('job_id')[0]?.textContent;
+
+                        if (success) {
                             if (action === 'delete') {
-                                // Remove the row from the table
-                                const row = document.querySelector(`tr[data-job-id="${data.job_id}"]`);
+                                const row = document.querySelector(`tr[data-job-id="${jobIdResponse}"]`);
                                 if (row) {
                                     row.remove();
-                                    showNotification('Job deleted successfully');
+                                    showNotification(message || 'Job deleted successfully');
                                 }
                             } else if (action === 'toggle_status') {
-                                // Update the status badge
-                                const statusBadge = document.querySelector(`tr[data-job-id="${data.job_id}"] .status-badge`);
-                                if (statusBadge) {
-                                    statusBadge.className = `badge bg-${data.badge_class} status-badge`;
-                                    statusBadge.textContent = data.status_text;
-                                    showNotification('Job status updated successfully');
+                                const statusBadge = document.querySelector(`tr[data-job-id="${jobIdResponse}"] .status-badge`);
+                                const badgeClass = xmlDoc.getElementsByTagName('badge_class')[0]?.textContent;
+                                const statusText = xmlDoc.getElementsByTagName('status_text')[0]?.textContent;
+                                if (statusBadge && badgeClass && statusText) {
+                                    statusBadge.className = `badge bg-${badgeClass} status-badge`;
+                                    statusBadge.textContent = statusText;
+                                    showNotification(message || 'Job status updated successfully');
                                 }
                             }
                         } else {
-                            showNotification(data.message, 'danger');
+                            showNotification(message, 'danger');
                         }
                     })
                     .catch(error => {
@@ -602,108 +632,182 @@ $employers = $pdo->query("SELECT employer_id, company_name FROM employers ORDER 
                 },
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Add the new job to the table
-                    const job = data.job;
-                    
-                    // Check if the table exists (no results message might be showing)
-                    let tbody = document.querySelector('table tbody');
-                    if (!tbody) {
-                        // Create the table if it doesn't exist
-                        const tableDiv = document.querySelector('.table-responsive');
-                        if (tableDiv) {
-                            tableDiv.innerHTML = `
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="col-id">ID</th>
-                                            <th class="col-title">Title</th>
-                                            <th class="col-company">Company</th>
-                                            <th class="col-location">Location</th>
-                                            <th class="col-salary">Salary</th>
-                                            <th class="col-apps">Applications</th>
-                                            <th class="col-status">Status</th>
-                                            <th class="col-date">Posted</th>
-                                            <th class="col-actions">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            `;
-                            tbody = document.querySelector('table tbody');
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text(); // Get text first
+            })
+            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml")) // Parse as XML
+            .then(xmlDoc => {
+                 if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                    showNotification('Error parsing XML response', 'danger');
+                    console.error("XML Parsing Error:", xmlDoc ? xmlDoc.getElementsByTagName('parsererror')[0] : 'No XML Document');
+                    return;
+                }
+
+                const success = xmlDoc.getElementsByTagName('success')[0]?.textContent === 'true';
+                const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'An unknown error occurred.';
+
+                if (success) {
+                    const jobNode = xmlDoc.getElementsByTagName('job')[0];
+                    if (jobNode) {
+                        const job = {
+                            job_id: jobNode.getElementsByTagName('job_id')[0]?.textContent,
+                            title: jobNode.getElementsByTagName('title')[0]?.textContent,
+                            company_name: jobNode.getElementsByTagName('company_name')[0]?.textContent,
+                            location: jobNode.getElementsByTagName('location')[0]?.textContent,
+                            salary: jobNode.getElementsByTagName('salary')[0]?.textContent,
+                            created_at: jobNode.getElementsByTagName('created_at')[0]?.textContent,
+                            application_count: jobNode.getElementsByTagName('application_count')[0]?.textContent,
+                            badge_class: jobNode.getElementsByTagName('badge_class')[0]?.textContent,
+                            status_text: jobNode.getElementsByTagName('status_text')[0]?.textContent
+                        };
+
+                        let tbody = document.querySelector('table tbody');
+                        const noJobsMessage = document.querySelector('.table-responsive .text-center.py-4');
+                        if (!tbody && noJobsMessage) {
+                             // Remove "No jobs found" message and create table structure
+                             const tableDiv = document.querySelector('.table-responsive');
+                             noJobsMessage.remove();
+                             if (tableDiv) {
+                                tableDiv.innerHTML = `
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-id">ID</th> <th class="col-title">Title</th> <th class="col-company">Company</th>
+                                                <th class="col-location">Location</th> <th class="col-salary">Salary</th> <th class="col-apps">Applications</th>
+                                                <th class="col-status">Status</th> <th class="col-date">Posted</th> <th class="col-actions">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                `;
+                                tbody = document.querySelector('table tbody');
+                             }
                         }
+
+                        if (tbody) {
+                            const createdDate = job.created_at ? new Date(job.created_at) : null;
+                            const formattedDate = createdDate ? createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+                            const formattedSalary = job.salary ? `$${parseFloat(job.salary).toFixed(2)}` : 'N/A';
+
+                            const newRow = document.createElement('tr');
+                            newRow.setAttribute('data-job-id', job.job_id || '');
+                            newRow.innerHTML = `
+                                <td>${job.job_id || 'N/A'}</td>
+                                <td><div><strong>${job.title || 'N/A'}</strong></div></td>
+                                <td>${job.company_name || 'N/A'}</td>
+                                <td>${job.location || 'N/A'}</td>
+                                <td>${formattedSalary}</td>
+                                <td>${job.application_count || '0'}</td>
+                                <td>
+                                    <span class="badge bg-${job.badge_class || 'secondary'} status-badge">
+                                        ${job.status_text || 'Unknown'}
+                                    </span>
+                                </td>
+                                <td>${formattedDate}</td>
+                                <td>
+                                    <div class="actions-group">
+                                        <button type="button" class="btn btn-sm btn-info"
+                                                onclick="viewJobDetails(${job.job_id})"
+                                                title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        
+                                        <form method="POST" class="d-inline ajax-form">
+                                            <input type="hidden" name="action" value="toggle_status">
+                                            <input type="hidden" name="job_id" value="${job.job_id}">
+                                            <button type="submit" class="btn btn-sm btn-warning" title="Toggle Status">
+                                                <i class="bi bi-toggle-on"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="POST" class="d-inline ajax-form">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="job_id" value="${job.job_id}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete Job">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(newRow); // Add to top of table
+                            
+                            // Re-initialize AJAX for the new forms on this row
+                            newRow.querySelectorAll('form.ajax-form').forEach(form => {
+                                initializeSingleAjaxForm(form); // Use helper or repeat logic
+                            });
+
+                            // Reset form and close modal
+                            this.reset();
+                            const addJobModalEl = document.getElementById('addJobModal');
+                            if (addJobModalEl) {
+                                const modal = bootstrap.Modal.getInstance(addJobModalEl);
+                                if (modal) modal.hide();
+                            }
+                            
+                            showNotification(message || 'Job created successfully');
+    // Helper function to initialize a single form (to avoid re-initializing all)
+    function initializeSingleAjaxForm(form) {
+         form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const action = this.querySelector('[name="action"]').value;
+            const jobId = this.querySelector('[name="job_id"]').value;
+            let confirmed = false;
+            if (action === 'toggle_status') confirmed = confirm('Are you sure you want to toggle this job\'s status?');
+            else if (action === 'delete') confirmed = confirm('Are you sure you want to delete this job? This action cannot be undone.');
+            
+            if (confirmed) {
+                const formData = new FormData(this);
+                fetch('jobs.php', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                 })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.text();
+                })
+                .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+                .then(xmlDoc => { /* ... rest of XML handling logic as in initializeAjaxForms ... */
+                    if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                        showNotification('Error parsing XML response', 'danger'); return;
                     }
-                    
-                    if (tbody) {
-                        // Format date
-                        const createdDate = new Date(job.created_at);
-                        const formattedDate = createdDate.toLocaleDateString('en-US', { 
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        });
-                        
-                        const newRow = document.createElement('tr');
-                        newRow.setAttribute('data-job-id', job.job_id);
-                        newRow.innerHTML = `
-                            <td>${job.job_id}</td>
-                            <td><div><strong>${job.title}</strong></div></td>
-                            <td>${job.company_name}</td>
-                            <td>${job.location}</td>
-                            <td>$${parseFloat(job.salary).toFixed(2)}</td>
-                            <td>${job.application_count}</td>
-                            <td>
-                                <span class="badge bg-${job.badge_class} status-badge">
-                                    ${job.status_text}
-                                </span>
-                            </td>
-                            <td>${formattedDate}</td>
-                            <td>
-                                <div class="actions-group">
-                                    <button type="button" class="btn btn-sm btn-info" 
-                                            onclick="viewJobDetails(${job.job_id})" 
-                                            title="View Details">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    
-                                    <form method="POST" class="d-inline ajax-form">
-                                        <input type="hidden" name="action" value="toggle_status">
-                                        <input type="hidden" name="job_id" value="${job.job_id}">
-                                        <button type="submit" class="btn btn-sm btn-warning" title="Toggle Status">
-                                            <i class="bi bi-toggle-on"></i>
-                                        </button>
-                                    </form>
-                                    
-                                    <form method="POST" class="d-inline ajax-form">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="job_id" value="${job.job_id}">
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete Job">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        `;
-                        tbody.prepend(newRow); // Add to top of table
-                        
-                        // Reset form and close modal
-                        this.reset();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addJobModal'));
-                        modal.hide();
-                        
-                        // Re-initialize AJAX for the new forms
-                        initializeAjaxForms();
-                        
-                        showNotification('Job created successfully');
+                    const success = xmlDoc.getElementsByTagName('success')[0]?.textContent === 'true';
+                    const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'An unknown error occurred.';
+                    const jobIdResponse = xmlDoc.getElementsByTagName('job_id')[0]?.textContent;
+                    if (success) {
+                        if (action === 'delete') {
+                            const row = document.querySelector(`tr[data-job-id="${jobIdResponse}"]`);
+                            if (row) { row.remove(); showNotification(message || 'Job deleted successfully'); }
+                        } else if (action === 'toggle_status') {
+                            const statusBadge = document.querySelector(`tr[data-job-id="${jobIdResponse}"] .status-badge`);
+                            const badgeClass = xmlDoc.getElementsByTagName('badge_class')[0]?.textContent;
+                            const statusText = xmlDoc.getElementsByTagName('status_text')[0]?.textContent;
+                            if (statusBadge && badgeClass && statusText) {
+                                statusBadge.className = `badge bg-${badgeClass} status-badge`;
+                                statusBadge.textContent = statusText;
+                                showNotification(message || 'Job status updated successfully');
+                            }
+                        }
+                    } else { showNotification(message, 'danger'); }
+                })
+                .catch(error => { showNotification('AJAX Error: ' + error.message, 'danger'); });
+            }
+        });
+    }
+                        } else {
+                             showNotification('Could not find table body to add new job.', 'danger');
+                        }
+                    } else {
+                         showNotification('Job data not found in response.', 'danger');
                     }
                 } else {
-                    showNotification(data.message, 'danger');
+                    showNotification(message, 'danger');
                 }
             })
             .catch(error => {
-                showNotification('An error occurred while processing your request', 'danger');
+                showNotification('An error occurred while processing your request: ' + error.message, 'danger');
                 console.error('Error:', error);
             });
         });
