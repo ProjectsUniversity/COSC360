@@ -5,9 +5,12 @@ requireAdmin();
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    header('Content-Type: application/xml; charset=utf-8');
     $action = $_POST['action'] ?? '';
     $user_id = $_POST['user_id'] ?? '';
-    $response = ['success' => false, 'message' => 'Invalid action'];
+    
+    // Start XML output
+    $xml = new SimpleXMLElement('<response/>');
 
     switch ($action) {
         case 'create_user':
@@ -15,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
             $required_fields = ['full_name', 'email', 'password'];
             foreach ($required_fields as $field) {
                 if (empty($_POST[$field])) {
-                    $response = ['success' => false, 'message' => 'All required fields must be filled out'];
-                    header('Content-Type: application/json');
-                    echo json_encode($response);
+                    $xml->addChild('success', 'false');
+                    $xml->addChild('message', 'All required fields must be filled out');
+                    echo $xml->asXML();
                     exit();
                 }
             }
@@ -26,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
             $stmt->execute([$_POST['email']]);
             if ($stmt->fetchColumn() > 0) {
-                $response = ['success' => false, 'message' => 'Email already exists'];
-                header('Content-Type: application/json');
-                echo json_encode($response);
+                $xml->addChild('success', 'false');
+                $xml->addChild('message', 'Email already exists');
+                echo $xml->asXML();
                 exit();
             }
             
@@ -54,22 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                 
                 logAdminAction('create_user', "Created new user: {$user['full_name']} (ID: $userId)");
                 
-                $response = [
-                    'success' => true, 
-                    'message' => 'User created successfully',
-                    'user' => [
-                        'user_id' => $user['user_id'],
-                        'full_name' => $user['full_name'],
-                        'email' => $user['email'],
-                        'created_at' => $user['created_at'],
-                        'application_count' => $user['application_count'],
-                        'status' => $user['status'],
-                        'status_badge' => $user['status'] === 'active' ? 'bg-success' : 'bg-danger',
-                        'status_text' => ucfirst($user['status'])
-                    ]
-                ];
+                $xml->addChild('success', 'true');
+                $xml->addChild('message', 'User created successfully');
+                $userNode = $xml->addChild('user');
+                $userNode->addChild('user_id', $user['user_id']);
+                // Use htmlspecialchars when adding text content to prevent XSS if XML is mishandled
+                $userNode->addChild('full_name', htmlspecialchars($user['full_name']));
+                $userNode->addChild('email', htmlspecialchars($user['email']));
+                $userNode->addChild('created_at', $user['created_at']);
+                $userNode->addChild('application_count', $user['application_count']);
+                $userNode->addChild('status', $user['status']);
+                $userNode->addChild('status_badge', $user['status'] === 'active' ? 'bg-success' : 'bg-danger');
+                $userNode->addChild('status_text', ucfirst($user['status']));
+
             } catch (PDOException $e) {
-                $response = ['success' => false, 'message' => 'Error creating user: ' . $e->getMessage()];
+                $xml->addChild('success', 'false');
+                $xml->addChild('message', 'Error creating user: ' . htmlspecialchars($e->getMessage()));
             }
             break;
         case 'delete':
@@ -91,10 +94,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                     
                     $pdo->commit();
                     logAdminAction('delete_user', "Deleted user ID: $user_id");
-                    $response = ['success' => true, 'message' => 'User deleted successfully', 'user_id' => $user_id];
+                    $xml->addChild('success', 'true');
+                    $xml->addChild('message', 'User deleted successfully');
+                    $xml->addChild('user_id', $user_id);
                 } catch (PDOException $e) {
                     $pdo->rollBack();
-                    $response = ['success' => false, 'message' => 'Failed to delete user: ' . $e->getMessage()];
+                    $xml->addChild('success', 'false');
+                    $xml->addChild('message', 'Failed to delete user: ' . htmlspecialchars($e->getMessage()));
                 }
             }
             break;
@@ -108,23 +114,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
                     $new_status = $stmt->fetchColumn();
                     
                     logAdminAction('toggle_user_status', "Toggled status for user ID: $user_id");
-                    $response = [
-                        'success' => true, 
-                        'message' => 'User status updated successfully', 
-                        'user_id' => $user_id,
-                        'new_status' => $new_status,
-                        'badge_class' => $new_status === 'active' ? 'bg-success' : 'bg-danger',
-                        'status_text' => ucfirst($new_status)
-                    ];
+                    $xml->addChild('success', 'true');
+                    $xml->addChild('message', 'User status updated successfully');
+                    $xml->addChild('user_id', $user_id);
+                    $xml->addChild('new_status', $new_status);
+                    $xml->addChild('badge_class', $new_status === 'active' ? 'bg-success' : 'bg-danger');
+                    $xml->addChild('status_text', ucfirst($new_status));
                 } else {
-                    $response = ['success' => false, 'message' => 'Failed to update user status'];
+                    $xml->addChild('success', 'false');
+                    $xml->addChild('message', 'Failed to update user status');
                 }
             }
             break;
     }
 
-    header('Content-Type: application/json');
-    echo json_encode($response);
+    // If no specific action matched or default case needed
+    if ($xml->count() == 0) { // Check if anything was added to the XML
+         $xml->addChild('success', 'false');
+         $xml->addChild('message', 'Invalid action or no data processed.');
+    }
+    echo $xml->asXML();
     exit();
 }
 
@@ -345,7 +354,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="usersTable">
                                 <thead">
                                     <tr>
                                         <th class="col-id">ID</th>
@@ -484,7 +493,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // Function to initialize AJAX for forms
         function initializeAjaxForms() {
             // Handle toggle status forms
-            document.querySelectorAll('form[action=""][method="POST"]').forEach(form => {
+            // Handle toggle status and delete forms (updated selector to be more specific)
+            document.querySelectorAll('form.d-inline[method="POST"]').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     const action = this.querySelector('[name="action"]').value;
                     if (action === 'toggle_status' || action === 'delete') {
@@ -506,31 +516,41 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             const xhr = new XMLHttpRequest();
                             xhr.open('POST', 'users.php');
                             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                            xhr.responseType = 'json';
+                            // No need to set responseType for XML, default is fine or use 'document'
                             
                             xhr.onload = function() {
                                 if (xhr.status === 200) {
-                                    const response = xhr.response;
+                                    const xmlDoc = xhr.responseXML;
+                                    if (!xmlDoc) {
+                                        showNotification('Error parsing XML response', 'danger');
+                                        return;
+                                    }
                                     
-                                    if (response.success) {
+                                    const success = xmlDoc.getElementsByTagName('success')[0]?.textContent === 'true';
+                                    const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'An unknown error occurred.';
+                                    const userIdResponse = xmlDoc.getElementsByTagName('user_id')[0]?.textContent;
+
+                                    if (success) {
                                         if (action === 'delete') {
                                             // Remove the row from the table
-                                            const row = document.querySelector(`tr[data-user-id="${response.user_id}"]`);
+                                            const row = document.querySelector(`tr[data-user-id="${userIdResponse}"]`);
                                             if (row) {
                                                 row.remove();
                                             }
-                                            showNotification('User deleted successfully');
+                                            showNotification(message || 'User deleted successfully');
                                         } else if (action === 'toggle_status') {
                                             // Update the status badge
-                                            const statusBadge = document.querySelector(`tr[data-user-id="${response.user_id}"] .status-badge`);
-                                            if (statusBadge) {
-                                                statusBadge.className = `badge ${response.badge_class} status-badge`;
-                                                statusBadge.textContent = response.status_text;
+                                            const statusBadge = document.querySelector(`tr[data-user-id="${userIdResponse}"] .status-badge`);
+                                            const badgeClass = xmlDoc.getElementsByTagName('badge_class')[0]?.textContent;
+                                            const statusText = xmlDoc.getElementsByTagName('status_text')[0]?.textContent;
+                                            if (statusBadge && badgeClass && statusText) {
+                                                statusBadge.className = `badge ${badgeClass} status-badge`;
+                                                statusBadge.textContent = statusText;
                                             }
-                                            showNotification('User status updated successfully');
+                                            showNotification(message || 'User status updated successfully');
                                         }
                                     } else {
-                                        showNotification(response.message, 'danger');
+                                        showNotification(message, 'danger');
                                     }
                                 } else {
                                     showNotification('An error occurred', 'danger');
@@ -558,64 +578,98 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', 'users.php');
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                xhr.responseType = 'json';
+                // No need to set responseType for XML
                 
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        const response = xhr.response;
+                        const xmlDoc = xhr.responseXML;
+                         if (!xmlDoc) {
+                            showNotification('Error parsing XML response', 'danger');
+                            return;
+                        }
+
+                        const success = xmlDoc.getElementsByTagName('success')[0]?.textContent === 'true';
+                        const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'An unknown error occurred.';
                         
-                        if (response.success) {
-                            // Add the new user to the table
-                            const user = response.user;
-                            const tbody = document.querySelector('table tbody');
-                            const newRow = document.createElement('tr');
-                            newRow.setAttribute('data-user-id', user.user_id);
-                            newRow.innerHTML = `
-                                <td>${user.user_id}</td>
-                                <td>${user.full_name}</td>
-                                <td>${user.email}</td>
-                                <td>${new Date(user.created_at).toLocaleDateString()}</td>
-                                <td>${user.application_count}</td>
-                                <td>
-                                    <span class="badge ${user.status_badge} status-badge">
-                                        ${user.status_text}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-info me-2" 
-                                                onclick="viewDetails(${user.user_id})">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <form method="POST" class="d-inline" 
-                                              onsubmit="return confirm('Are you sure you want to toggle this user\'s status?');">
-                                            <input type="hidden" name="action" value="toggle_status">
-                                            <input type="hidden" name="user_id" value="${user.user_id}">
-                                            <button type="submit" class="btn btn-sm btn-warning me-2">
-                                                <i class="bi bi-toggle-on"></i>
+                        if (success) {
+                            const userNode = xmlDoc.getElementsByTagName('user')[0];
+                            if (userNode) {
+                                const user = {
+                                    user_id: userNode.getElementsByTagName('user_id')[0]?.textContent,
+                                    full_name: userNode.getElementsByTagName('full_name')[0]?.textContent,
+                                    email: userNode.getElementsByTagName('email')[0]?.textContent,
+                                    created_at: userNode.getElementsByTagName('created_at')[0]?.textContent,
+                                    application_count: userNode.getElementsByTagName('application_count')[0]?.textContent,
+                                    status_badge: userNode.getElementsByTagName('status_badge')[0]?.textContent,
+                                    status_text: userNode.getElementsByTagName('status_text')[0]?.textContent
+                                };
+
+                                const tbody = document.querySelector('.table-responsive .table > tbody'); // More specific selector
+                                const newRow = document.createElement('tr');
+                                newRow.setAttribute('data-user-id', user.user_id);
+                                // Format date simply for display
+                                const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A';
+                                
+                                newRow.innerHTML = `
+                                    <td>${user.user_id || 'N/A'}</td>
+                                    <td>${user.full_name || 'N/A'}</td>
+                                    <td>${user.email || 'N/A'}</td>
+                                    <td>${createdDate}</td>
+                                    <td>${user.application_count || '0'}</td>
+                                    <td>
+                                        <span class="badge ${user.status_badge || 'bg-secondary'} status-badge">
+                                            ${user.status_text || 'Unknown'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-info me-2"
+                                                    onclick="viewDetails(${user.user_id})">
+                                                <i class="bi bi-eye"></i>
                                             </button>
-                                        </form>
-                                        <form method="POST" class="d-inline" 
-                                              onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="user_id" value="${user.user_id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            `;
-                            tbody.appendChild(newRow);
-                            
-                            // Reset the form
-                            document.getElementById('addUserForm').reset();
-                            const addUserModal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-                            addUserModal.hide();
-                            
-                            showNotification('User created successfully');
+                                            <form method="POST" class="d-inline"
+                                                  onsubmit="event.preventDefault(); /* Prevent default, handled by AJAX */">
+                                                <input type="hidden" name="action" value="toggle_status">
+                                                <input type="hidden" name="user_id" value="${user.user_id}">
+                                                <button type="submit" class="btn btn-sm btn-warning me-2">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            </form>
+                                            <form method="POST" class="d-inline"
+                                                  onsubmit="event.preventDefault(); /* Prevent default, handled by AJAX */">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="user_id" value="${user.user_id}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                `;
+                                // Prepend the new row to the top of the table body for better visibility
+                                tbody.appendChild(newRow);
+                                
+                                // Re-initialize AJAX handlers for the new row's forms
+                                newRow.querySelectorAll('form.d-inline[method="POST"]').forEach(form => {
+                                    initializeSingleAjaxForm(form); // Use a helper if needed or repeat logic
+                                });
+
+                                // Reset the form and hide modal
+                                document.getElementById('addUserForm').reset();
+                                const addUserModalEl = document.getElementById('addUserModal');
+                                if (addUserModalEl) {
+                                     const addUserModal = bootstrap.Modal.getInstance(addUserModalEl);
+                                     if (addUserModal) {
+                                         addUserModal.hide();
+                                     }
+                                }
+                                
+                                showNotification(message || 'User created successfully');
+                            } else {
+                                showNotification('User data not found in response.', 'danger');
+                            }
                         } else {
-                            showNotification(response.message, 'danger');
+                            showNotification(message, 'danger');
                         }
                     } else {
                         showNotification('An error occurred', 'danger');
