@@ -37,7 +37,8 @@ try {
                     $_SESSION['message'] = "Profile updated successfully!";
                     break;
                 case 'update_profile_image':
-                    // Image upload handling                    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                    // Image upload handling
+                    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
                         $file_name = $_FILES['profile_image']['name'];
                         $file_tmp = $_FILES['profile_image']['tmp_name'];
                         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
@@ -46,26 +47,12 @@ try {
 
                         if (in_array($file_ext, $extensions) === false) {
                             $_SESSION['error'] = "Extension not allowed, please choose a JPEG or PNG file.";
-                            error_log("Invalid file extension: " . $file_ext);
                         } else {
                             $image_name = uniqid() . '.' . $file_ext;
-                            $target_dir = dirname(dirname(dirname(__FILE__))) . '/Uploads/profile_images/';
-                            error_log("Attempting to upload to directory: " . $target_dir);
-                            
+                            $target_dir = __DIR__ . "/../../Uploads/profile_images/";
                             if (!file_exists($target_dir)) {
-                                if (!@mkdir($target_dir, 0777, true)) {
-                                    error_log("Failed to create directory: " . error_get_last()['message']);
-                                    $_SESSION['error'] = "Failed to create upload directory";
-                                } else {
-                                    error_log("Directory created successfully");
-                                }
+                                mkdir($target_dir, 0777, true);
                             }
-                            
-                            if (!is_writable($target_dir)) {
-                                error_log("Directory not writable: " . $target_dir);
-                                chmod($target_dir, 0777);
-                            }
-                            
                             $target_file = $target_dir . $image_name;
 
                             if (move_uploaded_file($file_tmp, $target_file)) {
