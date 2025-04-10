@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE users ADD COLUMN profile_image VARCHAR(255) NULL;
+
 CREATE TABLE IF NOT EXISTS employers (
     employer_id INT AUTO_INCREMENT PRIMARY KEY,
     company_name VARCHAR(255) NOT NULL,
@@ -21,6 +23,8 @@ CREATE TABLE IF NOT EXISTS employers (
     status VARCHAR(50) DEFAULT 'active',  -- Add status column to employers table
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE employers ADD COLUMN profile_image VARCHAR(255) NULL;
 
 CREATE TABLE IF NOT EXISTS jobs (
     job_id INT AUTO_INCREMENT PRIMARY KEY,

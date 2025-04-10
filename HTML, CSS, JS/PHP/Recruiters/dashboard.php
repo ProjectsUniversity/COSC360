@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['employer_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -98,7 +98,13 @@ try {
                         </a>
                     </li>
                 </ul>
-                <hr>
+                <hr>                <div class="profile-section text-center mb-3">
+                    <div class="profile-image-container mb-2">
+                        <img src="<?php echo '../../../' . ($employer['profile_image'] ?? 'images/default-company-logo.png'); ?>" 
+                             alt="Company Profile" 
+                             class="profile-image">
+                    </div>
+                </div>
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" 
                        data-bs-toggle="dropdown" aria-expanded="false">
