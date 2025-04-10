@@ -49,7 +49,7 @@ try {
                             $_SESSION['error'] = "Extension not allowed, please choose a JPEG or PNG file.";
                         } else {
                             $image_name = uniqid() . '.' . $file_ext;
-                            $target_dir = "Uploads/profile_images/";
+                            $target_dir = __DIR__ . "/../../Uploads/profile_images/";
                             if (!file_exists($target_dir)) {
                                 mkdir($target_dir, 0777, true);
                             }
@@ -64,8 +64,9 @@ try {
                                     unlink($old_image);
                                 }
 
+                                $relative_path = "Uploads/profile_images/" . $image_name;
                                 $stmt = $pdo->prepare("UPDATE users SET profile_image = ? WHERE user_id = ?");
-                                $stmt->execute([$target_file, $_SESSION['user_id']]);
+                                $stmt->execute([$relative_path, $_SESSION['user_id']]);
                                 $_SESSION['message'] = "Profile image updated successfully!";
                             } else {
                                 $_SESSION['error'] = "Sorry, there was an error uploading your file.";
@@ -172,7 +173,7 @@ try {
             <?php endif; ?>
             
             <div class="profile-header">
-                <img src="<?php echo htmlspecialchars($user['profile_image'] ?? 'images/default-company-logo.png'); ?>"
+                <img src="<?php echo htmlspecialchars('../../' . ($user['profile_image'] ?? 'images/default-company-logo.png')); ?>"
                      alt="Profile Picture" class="profile-picture" id="profile-picture">
                 <div class="profile-info">
                     <h1><?php echo htmlspecialchars($user['full_name']); ?></h1>
