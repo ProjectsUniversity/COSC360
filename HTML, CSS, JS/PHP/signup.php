@@ -54,10 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         mkdir($target_dir, 0777, true);
                         error_log("Directory created");
                     }
-                    $target_file = $target_dir . $image_name;
-
-                    if (move_uploaded_file($file_tmp, $target_file)) {
-                        $profile_image = $target_file;
+                    $target_file = $target_dir . $image_name;                    if (move_uploaded_file($file_tmp, $target_file)) {
+                        $profile_image = "Uploads/profile_images/" . $image_name;  // Store relative path
                         error_log("File moved successfully to: " . $target_file);
                     } else {
                         $error = "Sorry, there was an error uploading your file.";
@@ -87,15 +85,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $company_name = htmlspecialchars($_POST['company_name'] ?? '', ENT_QUOTES, 'UTF-8');
             
-            $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location)
-                                  VALUES (?, ?, ?, ?)");
-            $stmt->execute([$company_name, $email, $password_hash, $location]);
-            
-            $_SESSION['employer_id'] = $pdo->lastInsertId();
-            $_SESSION['user_type'] = 'employer';
-            
-            header('Location: Recruiters/dashboard.php');
-            exit();
+            // Image upload handling for employers
+            $profile_image = null;
+            error_log("Employer Image upload started");
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                $file_name = $_FILES['profile_image']['name'];
+                $file_tmp = $_FILES['profile_image']['tmp_name'];
+                $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                $extensions = array("jpeg", "jpg", "png");
+
+                if (in_array($file_ext, $extensions) === false) {
+                    $error = "Extension not allowed, please choose a JPEG or PNG file.";
+                    error_log("Extension not allowed");
+                } else {
+                    $image_name = uniqid() . '.' . $file_ext;
+                    $target_dir = __DIR__ . "/../../Uploads/profile_images/";
+                    if (!file_exists($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                        error_log("Directory created");
+                    }
+                    $target_file = $target_dir . $image_name;
+                    if (move_uploaded_file($file_tmp, $target_file)) {
+                        $profile_image = "Uploads/profile_images/" . $image_name;  // Store relative path
+                        error_log("File moved successfully to: " . $target_file);
+                    } else {
+                        $error = "Sorry, there was an error uploading your file.";
+                        error_log("File move failed");
+                    }
+                }
+            } else {
+                if (isset($_FILES['profile_image'])) {
+                    error_log("Image upload failed. Error code: " . $_FILES['profile_image']['error']);
+                } else {
+                    error_log("No image uploaded");
+                }
+                $error = "Please upload a profile image.";
+            }
+
+            if (empty($error)) {
+                $stmt = $pdo->prepare("INSERT INTO employers (company_name, email, password_hash, location, profile_image)
+                                  VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$company_name, $email, $password_hash, $location, $profile_image]);
+                
+                $_SESSION['employer_id'] = $pdo->lastInsertId();
+                $_SESSION['user_type'] = 'employer';
+                
+                header('Location: Recruiters/dashboard.php');
+                exit();
+            }
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
