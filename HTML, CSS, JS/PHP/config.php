@@ -1,18 +1,17 @@
 <?php
-// Database configuration
+
 define('DB_HOST', 'localhost');
-/*define('DB_NAME', 'shlok10');
-define('DB_USER', 'shlok10');        // Default XAMPP username
-define('DB_PASS', 'shlok10');  */          // Default XAMPP password has no password
 define('DB_NAME', 'shlok10');
-define('DB_USER', 'root');        // Default XAMPP username
-define('DB_PASS', '');
-// Error reporting for development (remove in production)
+define('DB_USER', 'shlok10');        
+define('DB_PASS', 'shlok10');            
+/*define('DB_NAME', 'shlok10');
+define('DB_USER', 'root');        
+define('DB_PASS', '');*/
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    // Create PDO instance
     $pdo = new PDO(
         "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
         DB_USER,
@@ -24,7 +23,6 @@ try {
         ]
     );
 } catch(PDOException $e) {
-    // Log error (in production, don't display the error message to users)
     error_log("Connection failed: " . $e->getMessage());
     die("Connection failed. Please try again later.");
 }
