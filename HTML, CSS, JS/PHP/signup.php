@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($type === 'jobseeker') {
             $full_name = htmlspecialchars($_POST['full_name'] ?? '', ENT_QUOTES, 'UTF-8');
-            
-            // Image upload handling
+              // Image upload handling
             $profile_image = null;
             error_log("Image upload started");
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
@@ -49,17 +48,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     error_log("Extension not allowed");
                 } else {
                     $image_name = uniqid() . '.' . $file_ext;
-                    $target_dir = __DIR__ . "/../../Uploads/profile_images/";
+                    $target_dir = dirname(dirname(dirname(__FILE__))) . '/Uploads/profile_images/';
+                    error_log("Target directory: " . $target_dir);
+                    
                     if (!file_exists($target_dir)) {
-                        mkdir($target_dir, 0777, true);
-                        error_log("Directory created");
+                        if (!@mkdir($target_dir, 0777, true)) {
+                            error_log("Failed to create directory: " . error_get_last()['message']);
+                            $error = "Server configuration error. Please try again later.";
+                        } else {
+                            error_log("Directory created successfully");
+                        }
                     }
-                    $target_file = $target_dir . $image_name;                    if (move_uploaded_file($file_tmp, $target_file)) {
-                        $profile_image = "Uploads/profile_images/" . $image_name;  // Store relative path
-                        error_log("File moved successfully to: " . $target_file);
-                    } else {
-                        $error = "Sorry, there was an error uploading your file.";
-                        error_log("File move failed");
+                    
+                    if (empty($error)) {
+                        $target_file = $target_dir . $image_name;
+                        if (move_uploaded_file($file_tmp, $target_file)) {
+                            $profile_image = "Uploads/profile_images/" . $image_name;
+                            error_log("File moved successfully to: " . $target_file);
+                        } else {
+                            $upload_error = error_get_last();
+                            error_log("File move failed: " . ($upload_error ? $upload_error['message'] : 'Unknown error'));
+                            $error = "Failed to upload file. Please try again.";
+                        }
                     }
                 }
             } else {
@@ -84,8 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             $company_name = htmlspecialchars($_POST['company_name'] ?? '', ENT_QUOTES, 'UTF-8');
-            
-            // Image upload handling for employers
+              // Image upload handling for employers
             $profile_image = null;
             error_log("Employer Image upload started");
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
@@ -100,18 +109,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     error_log("Extension not allowed");
                 } else {
                     $image_name = uniqid() . '.' . $file_ext;
-                    $target_dir = __DIR__ . "/../../Uploads/profile_images/";
+                    $target_dir = dirname(dirname(dirname(__FILE__))) . '/Uploads/profile_images/';
+                    error_log("Target directory: " . $target_dir);
+                    
                     if (!file_exists($target_dir)) {
-                        mkdir($target_dir, 0777, true);
-                        error_log("Directory created");
+                        if (!@mkdir($target_dir, 0777, true)) {
+                            error_log("Failed to create directory: " . error_get_last()['message']);
+                            $error = "Server configuration error. Please try again later.";
+                        } else {
+                            error_log("Directory created successfully");
+                        }
                     }
-                    $target_file = $target_dir . $image_name;
-                    if (move_uploaded_file($file_tmp, $target_file)) {
-                        $profile_image = "Uploads/profile_images/" . $image_name;  // Store relative path
-                        error_log("File moved successfully to: " . $target_file);
-                    } else {
-                        $error = "Sorry, there was an error uploading your file.";
-                        error_log("File move failed");
+                    
+                    if (empty($error)) {
+                        $target_file = $target_dir . $image_name;
+                        if (move_uploaded_file($file_tmp, $target_file)) {
+                            $profile_image = "Uploads/profile_images/" . $image_name;
+                            error_log("File moved successfully to: " . $target_file);
+                        } else {
+                            $upload_error = error_get_last();
+                            error_log("File move failed: " . ($upload_error ? $upload_error['message'] : 'Unknown error'));
+                            $error = "Failed to upload file. Please try again.";
+                        }
                     }
                 }
             } else {
