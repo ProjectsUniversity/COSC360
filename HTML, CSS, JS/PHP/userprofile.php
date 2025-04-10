@@ -36,6 +36,43 @@ try {
                     ]);
                     $_SESSION['message'] = "Profile updated successfully!";
                     break;
+                case 'update_profile_image':
+                    // Image upload handling
+                    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                        $file_name = $_FILES['profile_image']['name'];
+                        $file_tmp = $_FILES['profile_image']['tmp_name'];
+                        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                        $extensions = array("jpeg", "jpg", "png");
+
+                        if (in_array($file_ext, $extensions) === false) {
+                            $_SESSION['error'] = "Extension not allowed, please choose a JPEG or PNG file.";
+                        } else {
+                            $image_name = uniqid() . '.' . $file_ext;
+                            $target_dir = "Uploads/profile_images/";
+                            if (!file_exists($target_dir)) {
+                                mkdir($target_dir, 0777, true);
+                            }
+                            $target_file = $target_dir . $image_name;
+
+                            if (move_uploaded_file($file_tmp, $target_file)) {
+                                // Delete old profile image if exists
+                                $stmt = $pdo->prepare("SELECT profile_image FROM users WHERE user_id = ?");
+                                $stmt->execute([$_SESSION['user_id']]);
+                                $old_image = $stmt->fetch(PDO::FETCH_ASSOC)['profile_image'];
+                                if (!empty($old_image) && file_exists($old_image)) {
+                                    unlink($old_image);
+                                }
+
+                                $stmt = $pdo->prepare("UPDATE users SET profile_image = ? WHERE user_id = ?");
+                                $stmt->execute([$target_file, $_SESSION['user_id']]);
+                                $_SESSION['message'] = "Profile image updated successfully!";
+                            } else {
+                                $_SESSION['error'] = "Sorry, there was an error uploading your file.";
+                            }
+                        }
+                    }
+                    break;
                     
                 case 'update_resume':
                     if (isset($_FILES['resume']) && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
@@ -135,7 +172,7 @@ try {
             <?php endif; ?>
             
             <div class="profile-header">
-                <img src="<?php echo htmlspecialchars($user['profile_picture'] ?? 'default-profile.jpg'); ?>" 
+                <img src="<?php echo htmlspecialchars($user['profile_image'] ?? 'images/default-company-logo.png'); ?>"
                      alt="Profile Picture" class="profile-picture" id="profile-picture">
                 <div class="profile-info">
                     <h1><?php echo htmlspecialchars($user['full_name']); ?></h1>
@@ -204,6 +241,14 @@ try {
                            value="<?php echo htmlspecialchars($user['location']); ?>">
                 </div>
                 <button type="submit" class="edit-button">Save Changes</button>
+            </form>
+            <form action="userprofile.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="update_profile_image">
+                <div class="form-group">
+                    <label for="profile_image">Upload New Profile Image</label>
+                    <input type="file" name="profile_image" id="profile_image" accept=".jpg,.jpeg,.png">
+                </div>
+                <button type="submit" class="edit-button">Update Profile Image</button>
             </form>
             <form action="userprofile.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="update_resume">
