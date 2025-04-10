@@ -220,11 +220,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control" name="location" id="location" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="profile_image" class="form-label">Profile Image</label>
-                    <input type="file" class="form-control" name="profile_image" id="profile_image" required>
+                </div>                <div class="mb-3">
+                    <label for="profile_image" class="form-label">Profile Image (Optional)</label>
+                    <input type="file" class="form-control" name="profile_image" id="profile_image">
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Sign Up</button>
