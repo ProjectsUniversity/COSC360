@@ -2,9 +2,8 @@
 session_start();
 require_once('config.php');
 
-try {
-    $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
-                          e.company_name, e.employer_id
+try {    $stmt = $pdo->prepare("SELECT j.job_id, j.title, j.description, j.location, j.salary, j.created_at,
+                          e.company_name, e.employer_id, e.profile_image
                           FROM jobs j 
                           JOIN employers e ON j.employer_id = e.employer_id 
                           WHERE j.status = 'active'
@@ -68,8 +67,10 @@ try {
     </div>
 
     <div class="main-content">
-        <div class="job-card" id="job-card">
-            <h2 id="job-title"></h2>
+        <div class="job-card" id="job-card">            <div class="job-card-header">
+                <h2 id="job-title"></h2>
+                <img id="company-logo" src="../../../images/default-company-logo.png" alt="Company Logo" class="company-logo">
+            </div>
             <h4 id="company-name" onclick="viewCompanyProfile()">
                 <a href="#" class="company-link" id="company-link"></a>
             </h4>

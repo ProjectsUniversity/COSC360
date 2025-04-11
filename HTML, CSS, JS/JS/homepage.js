@@ -40,15 +40,19 @@ function updateJobCard() {
     document.getElementById('company-link').textContent = job.company_name;
     document.getElementById('job-description').textContent = job.description;
     
+    // Update company logo
+    const companyLogo = document.getElementById('company-logo');
+    companyLogo.src = job.profile_image ? '../../' + job.profile_image : '../images/default-company-logo.png';
+    
     const locationSpan = document.getElementById('job-location');
-    locationSpan.textContent = job.location;
+    locationSpan.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${job.location}`;
     
     const salarySpan = document.getElementById('job-salary');
-    salarySpan.textContent = formatSalary(job.salary);
+    salarySpan.innerHTML = `<i class="fas fa-dollar-sign"></i> ${formatSalary(job.salary)}`;
     
     const postedSpan = document.getElementById('job-posted');
-    postedSpan.textContent = formatDate(job.created_at);
-    
+    postedSpan.innerHTML = `<i class="fas fa-calendar"></i> ${formatDate(job.created_at)}`;
+
     // Reset saved state
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {

@@ -3,9 +3,8 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'shlok10');
 define('DB_USER', 'shlok10');        
-define('DB_PASS', 'shlok10');            
-/*define('DB_NAME', 'shlok10');
-define('DB_USER', 'root');        
+define('DB_PASS', 'shlok10');         
+/*define('DB_USER', 'root');        
 define('DB_PASS', '');*/
 
 error_reporting(E_ALL);

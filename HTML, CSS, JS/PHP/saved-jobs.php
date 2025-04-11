@@ -37,7 +37,6 @@ try {
         <a href="homepage.php"><i class="fas fa-home"></i> Home</a>
         <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
         <a href="saved-jobs.php" class="active"><i class="fas fa-bookmark"></i> Saved Jobs</a>
-        <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         <button class="theme-toggle" onclick="toggleTheme()">
             <i class="fas fa-moon"></i> Dark Mode
